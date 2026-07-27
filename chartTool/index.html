@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excel Chart Viewer</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #fff;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #86868b;
+      text-decoration: none;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    /* Password Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal {
+      background: rgba(26, 26, 46, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .modal h2 {
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #FFA2F0 0%, #9D69CE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 14px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .modal input:focus {
+      outline: none;
+      border-color: #FFA2F0;
+    }
+
+    .modal button {
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #FFA2F0 0%, #9D69CE 100%);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .modal button:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 24px rgba(255, 162, 240, 0.3);
+    }
+
+    .app-content {
+      filter: blur(10px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .app-content.unlocked {
+      filter: none;
+      pointer-events: auto;
+      user-select: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 300;
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #ff6b9d, #c44569);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-end;
+      margin-bottom: 30px;
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-size: 0.85rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-label {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .file-label:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    input[type="color"] {
+      width: 60px;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    input[type="number"] {
+      padding: 12px 16px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 1rem;
+      width: 100px;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    select {
+      padding: 12px 16px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 1rem;
+      width: 140px;
+      cursor: pointer;
+    }
+
+    select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    button {
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-export {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: #fff;
+    }
+
+    .btn-export:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(17, 153, 142, 0.4);
+    }
+
+    .btn-export:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .file-name {
+      text-align: center;
+      margin-top: 10px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .error {
+      color: #ff6b6b;
+      text-align: center;
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(255, 107, 107, 0.1);
+      border-radius: 8px;
+    }
+
+    .preview-info {
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Password Modal -->
+  <div class="modal-overlay" id="passwordModal">
+    <div class="modal">
+      <h2>🔐 Admin Access</h2>
+      <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off">
+      <button id="unlockBtn">Unlock</button>
+    </div>
+  </div>
+
+  <div class="container app-content" id="appContent">
+    <a href="../index.html" class="back-link">← Back to Pipoll</a>
+    <h1>📊 Excel Chart Viewer</h1>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="fileInput">Upload Excel</label>
+        <label class="file-label" for="fileInput">
+          📁 Choose File
+        </label>
+        <input type="file" id="fileInput" accept=".xlsx,.xls">
+        <div class="file-name" id="fileName"></div>
+      </div>
+
+      <div class="control-group">
+        <label for="colorPicker">Line Color</label>
+        <input type="color" id="colorPicker" value="#ff6b9d">
+      </div>
+
+      <div class="control-group">
+        <label for="lineWidth">Line Width</label>
+        <input type="number" id="lineWidth" value="3" min="1" max="10">
+      </div>
+
+      <div class="control-group">
+        <label for="formatSelect">Format</label>
+        <select id="formatSelect">
+          <option value="landscape">Landscape</option>
+          <option value="square">Square</option>
+          <option value="mobile">Mobile</option>
+        </select>
+      </div>
+
+      <button class="btn-export" id="exportBtn" disabled>
+        💾 Export PNG
+      </button>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="chartCanvas" width="1600" height="900"></canvas>
+    </div>
+    <div class="preview-info" id="previewInfo">Preview: 1600 × 900px (Landscape)</div>
+    <div id="error" class="error" style="display: none;"></div>
+  </div>
+
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <script>
+    // Password protection
+    const ADMIN_PASSWORD = 'pipoll2026';
+    const modal = document.getElementById('passwordModal');
+    const passwordInput = document.getElementById('passwordInput');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const appContent = document.getElementById('appContent');
+
+    // Check if already unlocked
+    if (sessionStorage.getItem('chartToolUnlocked') === 'true') {
+      modal.classList.add('hidden');
+      appContent.classList.add('unlocked');
+    }
+
+    unlockBtn.addEventListener('click', () => {
+      if (passwordInput.value === ADMIN_PASSWORD) {
+        modal.classList.add('hidden');
+        appContent.classList.add('unlocked');
+        sessionStorage.setItem('chartToolUnlocked', 'true');
+      } else {
+        alert('Incorrect password');
+        passwordInput.value = '';
+      }
+    });
+
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') unlockBtn.click();
+    });
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
