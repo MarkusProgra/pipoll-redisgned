@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Tracked Hub - Pipoll</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #86868b;
+            text-decoration: none;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFA2F0 0%, #9D69CE 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #86868b;
+            margin-bottom: 40px;
+        }
+
+        /* Password Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FFA2F0 0%, #9D69CE 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+
+        .modal input:focus {
+            outline: none;
+            border-color: #FFA2F0;
+        }
+
+        .modal button {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #FFA2F0 0%, #9D69CE 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .modal button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(255, 162, 240, 0.3);
+        }
+
+        .redirect-message {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .redirect-message.visible {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 162, 240, 0.2);
+            border-top-color: #FFA2F0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .redirect-message p {
+            color: #86868b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back to Pipoll</a>
+
+        <h1>🔁 Auto Tracked Hub</h1>
+        <p class="subtitle">Manage your auto-tracked habits</p>
+
+        <!-- Password Modal -->
+        <div class="modal-overlay" id="passwordModal">
+            <div class="modal">
+                <div class="modal-icon">🔐</div>
+                <h2>Admin Access</h2>
+                <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off">
+                <button id="unlockBtn">Continue</button>
+            </div>
+        </div>
+
+        <!-- Redirect Message -->
+        <div class="redirect-message" id="redirectMessage">
+            <div class="spinner"></div>
+            <p>Redirecting to Auto Tracked Hub...</p>
+        </div>
+    </div>
+
+    <script>
+        // Password protection
+        const ADMIN_PASSWORD = 'pipoll2026';
+        const REDIRECT_URL = 'https://human-stock-6uoy0n.web.app/';
+
+        const modal = document.getElementById('passwordModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const redirectMessage = document.getElementById('redirectMessage');
+
+        // Check if already unlocked
+        if (sessionStorage.getItem('autoTrackedUnlocked') === 'true') {
+            redirectToApp();
+        }
+
+        unlockBtn.addEventListener('click', () => {
+            if (passwordInput.value === ADMIN_PASSWORD) {
+                sessionStorage.setItem('autoTrackedUnlocked', 'true');
+                redirectToApp();
+            } else {
+                alert('Incorrect password');
+                passwordInput.value = '';
+            }
+        });
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') unlockBtn.click();
+        });
+
+        function redirectToApp() {
+            modal.classList.add('hidden');
+            redirectMessage.classList.add('visible');
+            setTimeout(() => {
+                window.location.href = REDIRECT_URL;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
