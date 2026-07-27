@@ -1,0 +1,194 @@
+/* Contact Page Styles */
+
+.contact-hero {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 24px 80px;
+    background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+    text-align: center;
+}
+
+.contact-hero .hero-badge {
+    margin-bottom: 24px;
+}
+
+.contact-hero .hero-title {
+    margin-bottom: 16px;
+}
+
+/* Contact Grid */
+.contact-section {
+    padding: 80px 24px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.contact-card {
+    padding: 40px 32px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+    border-color: var(--text);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+.contact-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+.contact-card p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--highlight-dim);
+    transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+    color: var(--text);
+}
+
+/* Admin Links */
+.admin-links-section {
+    padding: 60px 24px;
+    background: var(--bg-alt);
+}
+
+.admin-links {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.admin-links h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: var(--text);
+    text-align: center;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.admin-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 24px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.admin-link:hover {
+    border-color: var(--text);
+    transform: translateX(4px);
+}
+
+.admin-link span:first-child {
+    font-size: 1.3rem;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 100px 24px;
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    padding: 32px;
+    background: var(--bg-alt);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    background: var(--bg);
+    border: 1px solid var(--border);
+}
+
+.faq-item h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+.faq-item p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    .contact-grid,
+    .faq-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .contact-hero {
+        padding: 120px 16px 60px;
+    }
+
+    .contact-section {
+        padding: 60px 16px;
+    }
+
+    .contact-card {
+        padding: 32px 24px;
+    }
+
+    .admin-links-section {
+        padding: 40px 16px;
+    }
+
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .faq-section {
+        padding: 60px 16px;
+    }
+}

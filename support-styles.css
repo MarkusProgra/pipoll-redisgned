@@ -1,0 +1,240 @@
+/* Support Photo Verification Styles */
+
+.support-hero {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 24px 80px;
+    background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+    text-align: center;
+}
+
+.support-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.support-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.support-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+.support-section {
+    padding: 80px 24px;
+}
+
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.support-card {
+    padding: 32px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.support-card:hover {
+    border-color: var(--text);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+.support-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+}
+
+.support-card h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+.support-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+/* Checklist */
+.checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.check-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.check-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.check-item strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.check-item p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Note */
+.note {
+    padding: 20px;
+    background: var(--bg-alt);
+    border-radius: 12px;
+}
+
+.note p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* Rejection List */
+.rejection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.rejection-item {
+    padding: 16px;
+    background: var(--bg-alt);
+    border-radius: 12px;
+}
+
+.rejection-item strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.rejection-item p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Habit List */
+.habit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.habit-item {
+    padding: 14px 18px;
+    background: var(--bg-alt);
+    border-radius: 12px;
+}
+
+.habit-item strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.habit-item p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Support CTA */
+.support-cta {
+    padding: 100px 24px;
+    background: var(--bg-alt);
+    text-align: center;
+}
+
+.support-cta .support-tag {
+    margin-bottom: 24px;
+}
+
+.support-cta h2 {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.support-cta p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.support-cta .btn {
+    margin-top: 32px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .support-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .support-hero {
+        padding: 120px 16px 60px;
+    }
+
+    .support-section {
+        padding: 40px 16px;
+    }
+
+    .support-card {
+        padding: 24px;
+    }
+}

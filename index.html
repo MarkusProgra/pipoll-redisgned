@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipoll — The Human Stock Market</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="navbar-logo">pipoll</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blog.html">Blog</a>
+            <a href="contact.html">Contact</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            <a href="https://download.pipoll.live" class="navbar-download">Download</a>
+        </div>
+    </nav>
+
+    <nav class="navbar-floating">
+        <a href="https://download.pipoll.live" class="download-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+            </svg>
+        </a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-bg">
+                <div class="gradient-orb orb-1"></div>
+                <div class="gradient-orb orb-2"></div>
+                <div class="gradient-orb orb-3"></div>
+            </div>
+            <div class="hero-content">
+                <div class="hero-eyebrow reveal">
+                    <span class="eyebrow-dot"></span>
+                    <span>Backed by Silicon Valley</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line">Invest in</span>
+                    <span class="title-line highlight-text" id="typewriter-text">human potential.</span>
+                </h1>
+                <p class="hero-subtitle reveal">
+                    The human stock market. Trade shares in people, not companies.
+                </p>
+                <div class="scroll-indicator">
+                    <div class="scroll-line"></div>
+                    <span>Scroll</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="marquee-section">
+            <div class="marquee-container">
+                <div class="marquee-track">
+                    <span class="marquee-item">Health Data</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Financial History</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Social Influence</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Goal Tracking</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Live Pricing</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Public Profiles</span>
+                    <span class="marquee-divider"></span>
+                </div>
+                <div class="marquee-track">
+                    <span class="marquee-item">Health Data</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Financial History</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Social Influence</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Goal Tracking</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Live Pricing</span>
+                    <span class="marquee-divider"></span>
+                    <span class="marquee-item">Public Profiles</span>
+                    <span class="marquee-divider"></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="section problem">
+            <div class="container">
+                <div class="split-layout">
+                    <div class="split-content">
+                        <span class="section-label">The Problem</span>
+                        <h2 class="section-title">Today, people are not investable, just the things they build.</h2>
+                    </div>
+                    <div class="split-content">
+                        <p class="lead-text">
+                            Companies go public. Individuals don't. Even though the best investment in any startup is the founder themselves.
+                        </p>
+                        <p class="body-text">
+                            Pipoll fixes this broken system. We standardize personal data and create a market for human potential. In an AI era, human value is the real asset, not just the ability to build, and that is why we change it.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section solution">
+            <div class="container">
+                <div class="solution-grid">
+                    <div class="solution-card feature-card">
+                        <div class="card-number">01</div>
+                        <h3>Disclosure Layer</h3>
+                        <p>Combine all data into one verified chart. We unify the key data points the internet tracks on an individual into one.</p>
+                        <img src="data-points.gif" alt="Disclosure Layer Animation" class="card-gif">
+                    </div>
+                    <div class="solution-card feature-card">
+                        <div class="card-number">02</div>
+                        <h3>Market Pricing</h3>
+                        <p>Your stock moves in the direction you move and resemblance your success. With verified or manual data.</p>
+                        <img src="outcomes.gif" alt="Market Pricing Animation" class="card-gif">
+                    </div>
+                    <div class="solution-card feature-card">
+                        <div class="card-number">03</div>
+                        <h3>Aligned Incentives</h3>
+                        <p>You earn from every trade. More investment means more earnings. Credible information pays off.</p>
+                        <img src="money.gif" alt="Aligned Incentives Animation" class="card-gif">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="outcome" class="section outcome">
+            <div class="container">
+                <div class="outcome-content">
+                    <h2 class="outcome-title">
+                        <span class="outcome-small">Prediction markets predict events.</span>
+                        <hr style="height: 0.3em; visibility: hidden; margin: 0; padding: 0;">
+                        <span class="highlight">Pipoll predicts people.</span>
+                    </h2>
+                    <p class="outcome-text">
+                        The market knows who will succeed—before they do.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">+100</div>
+                        <div class="stat-label">Stocks Created</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">+$50K</div>
+                        <div class="stat-label">Raised</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">+7K</div>
+                        <div class="stat-label">Tracked Habits</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="section howitworks">
+            <div class="container">
+                <span class="section-label center">How It Works</span>
+                <div class="howitworks-steps">
+                    <div class="hiw-step">
+                        <span class="hiw-number">1</span>
+                        <h3>Create Profile</h3>
+                        <p>Connect your data—health, finances, social, goals.</p>
+                    </div>
+                    <div class="hiw-step">
+                        <span class="hiw-number">2</span>
+                        <h3>Get IPO</h3>
+                        <p>List yourself. Get analyzed. Get your start valuation.</p>
+                    </div>
+                    <div class="hiw-step">
+                        <span class="hiw-number">3</span>
+                        <h3>Go Public</h3>
+                        <p>Investors buy in. You earn from every trade.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section team">
+            <div class="container">
+                <span class="section-label center">The Team</span>
+                <div class="team-cards">
+                    <div class="team-card">
+                        <div class="card-gradient"></div>
+                        <div class="team-info">
+                            <h3>Markus Hoffmann</h3>
+                            <p>CTO</p>
+                            <a href="https://markushoffmann.dev" class="team-link">markushoffmann.dev ↗</a>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <div class="card-gradient"></div>
+                        <div class="team-info">
+                            <h3>Oliver Hoffmann</h3>
+                            <p>CEO</p>
+                            <a href="https://www.linkedin.com/in/oliver-hoffmann-109867260/" class="team-link">LinkedIn ↗</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="cta-content">
+                <h2 class="cta-title">Start investing in people</h2>
+                <a href="https://download.pipoll.live" class="btn btn-primary btn-large">
+                    <span>Download Pipoll</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="cta-bg"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="footer-logo">pipoll</span>
+                    <p>The Human Economy.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="hin.html">HIN</a>
+                    <a href="supportPhoto.html">Photo Help</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="legal-links">
+                    <a href="terms.html">Terms & Conditions</a>
+                    <a href="privacy.html">Privacy Policy</a>
+                </div>
+                <p>© 2026 Pipoll. All rights reserved.</p>
+            </div>
+            <div class="admin-tools">
+                <a href="chartTool/index.html" class="admin-tool-link">📊 Graph Tool</a>
+                <a href="autoTrackedHub/index.html" class="admin-tool-link">🔁 Auto Tracked Hub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
