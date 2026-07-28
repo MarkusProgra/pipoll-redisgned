@@ -200,6 +200,18 @@
             height: 240px;
             margin-top: 30px;
             padding: 0;
+            overflow: hidden;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
 
         .chart-placeholder {
@@ -1148,7 +1160,8 @@
             const svg = document.getElementById('chartSvg');
             const width = 400;
             const height = 200;
-            const padding = 10;
+            const paddingX = 0;
+            const paddingY = 5;
 
             const min = Math.min(...data);
             const max = Math.max(...data);
@@ -1156,8 +1169,8 @@
 
             // Scale data to fit SVG
             const scaledData = data.map((value, index) => {
-                const x = (index / (data.length - 1)) * (width - padding * 2) + padding;
-                const y = height - padding - ((value - min) / range) * (height - padding * 2);
+                const x = (index / (data.length - 1)) * (width - paddingX * 2) + paddingX;
+                const y = height - paddingY - ((value - min) / range) * (height - paddingY * 2);
                 return { x, y };
             });
 
@@ -1175,7 +1188,7 @@
             }
 
             // Create area path (gradient below line)
-            let areaPath = `M ${scaledData[0].x} ${height - padding}`;
+            let areaPath = `M ${scaledData[0].x} ${height - paddingY}`;
             areaPath += ` L ${scaledData[0].x} ${scaledData[0].y}`;
 
             for (let i = 1; i < scaledData.length; i++) {
@@ -1188,7 +1201,7 @@
                 areaPath += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
             }
 
-            areaPath += ` L ${scaledData[scaledData.length - 1].x} ${height - padding} Z`;
+            areaPath += ` L ${scaledData[scaledData.length - 1].x} ${height - paddingY} Z`;
 
             // Update SVG
             const color = isPositive ? '#7CE16B' : '#FD5E5E';
@@ -1387,12 +1400,106 @@
             const container = document.getElementById('container');
             const btn = document.getElementById('fullscreenBtn');
 
-            if (!document.fullscreenElement) {
-                container.requestFullscreen().then(() => {
-                    btn.style.display = 'none';
-                });
+            // Check for fullscreen support with vendor prefixes for mobile
+            const requestFullscreen = container.requestFullscreen ||
+                                      container.webkitRequestFullscreen ||
+                                      container.mozRequestFullScreen ||
+                                      container.msRequestFullscreen;
+
+            const exitFullscreen = document.exitFullscreen ||
+                                   document.webkitExitFullscreen ||
+                                   document.mozCancelFullScreen ||
+                                   document.msExitFullscreen;
+
+            if (!document.fullscreenElement && !document.webkitFullscreenElement &&
+                !document.mozFullScreenElement && !document.msFullscreenElement) {
+                if (requestFullscreen) {
+                    requestFullscreen.call(container).then(() => {
+                        btn.style.display = 'none';
+                    }).catch(err => {
+                        console.log('Fullscreen error:', err);
+                        // Fallback: simulate fullscreen by expanding container
+                        enterSimulatedFullscreen();
+                    });
+                } else {
+                    // Fallback for browsers without fullscreen API
+                    enterSimulatedFullscreen();
+                }
+            } else {
+                if (exitFullscreen) {
+                    exitFullscreen.call(document).then(() => {
+                        btn.style.display = 'block';
+                    });
+                } else {
+                    exitSimulatedFullscreen();
+                }
             }
         }
+
+        // Simulated fullscreen for mobile fallback
+        function enterSimulatedFullscreen() {
+            const container = document.getElementById('container');
+            const btn = document.getElementById('fullscreenBtn');
+
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.zIndex = '9999';
+            container.style.backgroundColor = '#1a1a2e';
+            document.body.style.overflow = 'hidden';
+            btn.style.display = 'none';
+
+            // Store state for exit
+            container.dataset.simulatedFullscreen = 'true';
+        }
+
+        function exitSimulatedFullscreen() {
+            const container = document.getElementById('container');
+            const btn = document.getElementById('fullscreenBtn');
+
+            container.style.position = '';
+            container.style.top = '';
+            container.style.left = '';
+            container.style.width = '';
+            container.style.height = '';
+            container.style.zIndex = '';
+            container.style.backgroundColor = '';
+            document.body.style.overflow = '';
+            btn.style.display = 'block';
+
+            container.dataset.simulatedFullscreen = 'false';
+        }
+
+        // Listen for fullscreen change events (with vendor prefixes)
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.getElementById('fullscreenBtn');
+            if (!document.fullscreenElement && btn) {
+                btn.style.display = 'block';
+            }
+        });
+
+        document.addEventListener('webkitfullscreenchange', () => {
+            const btn = document.getElementById('fullscreenBtn');
+            if (!document.webkitFullscreenElement && btn) {
+                btn.style.display = 'block';
+            }
+        });
+
+        document.addEventListener('mozfullscreenchange', () => {
+            const btn = document.getElementById('fullscreenBtn');
+            if (!document.mozFullScreenElement && btn) {
+                btn.style.display = 'block';
+            }
+        });
+
+        document.addEventListener('MSFullscreenChange', () => {
+            const btn = document.getElementById('fullscreenBtn');
+            if (!document.msFullscreenElement && btn) {
+                btn.style.display = 'block';
+            }
+        });
 
         // Initialize chart on load
         window.onload = function() {
