@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Stock - Pipoll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Gotham', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FDFCF3;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            background: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/5w4uhkhewone/stars.png') center/cover no-repeat;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Header Section */
+        .header {
+            padding: 50px 30px 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .back-button svg {
+            width: 24px;
+            height: 24px;
+            color: #FFFFFF;
+            transition: transform 0.2s;
+        }
+
+        .back-button:hover svg {
+            transform: scale(1.1);
+        }
+
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 140px;
+            height: 85px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+
+        /* Main Content */
+        .main-content {
+            background: #FDFCF3;
+            border-radius: 50px 50px 0 0;
+            min-height: calc(100vh - 145px);
+            padding-bottom: 150px;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            padding: 40px 22px 0 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .profile-image-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-image-wrapper {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(52, 50, 49, 0.83) 0%, #343231 100%);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: none;
+        }
+
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .name-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .name-input {
+            font-family: 'Gotham', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #343231;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid transparent;
+            width: 200px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .name-input:hover {
+            border-bottom: 1px solid #343231;
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-bottom: 2px solid #343231;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+            justify-content: flex-start;
+        }
+
+        .price-arrow {
+            width: 30px;
+            height: 30px;
+            object-fit: cover;
+        }
+
+        .price {
+            font-size: 35px;
+            font-weight: bold;
+            background: linear-gradient(90deg, rgba(52, 50, 49, 0.82) 0%, #343231 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .percentage-container {
+            background: rgba(145, 225, 107, 0.57);
+            border-radius: 30px;
+            padding: 2px 12px;
+            margin-top: 4px;
+            display: inline-block;
+            transition: background 0.3s ease;
+        }
+
+        .percentage {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(52, 50, 49, 0.49);
+        }
+
+        .percentage.positive {
+            color: #1a7f1a;
+        }
+
+        .percentage.negative {
+            color: #c62828;
+        }
+
+        /* Chart Section */
+        .chart-container {
+            width: 100%;
+            height: 240px;
+            margin-top: 30px;
+            padding: 0;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke-width: 3;
+        }
+
+        .chart-area {
+            opacity: 0.2;
+        }
+
+        /* Time Period Buttons */
+        .time-periods {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 24px;
+            margin-top: 20px;
+        }
+
+        .time-btn {
+            width: 60px;
+            height: 30px;
+            border-radius: 30px;
+            border: 3px solid rgba(52, 50, 49, 0.25);
+            background: transparent;
+            font-family: 'Gotham', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: rgba(52, 50, 49, 0.25);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .time-btn.active {
+            background: #343231;
+            border-color: #343231;
+            color: #FFFFFF;
+        }
+
+        /* Stats Cards */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 22px 0 22px;
+            gap: 12px;
+        }
+
+        .stat-card {
+            width: 160px;
+            height: 100px;
+            border-radius: 24px;
+            border: 3px solid rgba(52, 50, 49, 0.25);
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.02);
+        }
+
+        .stat-label {
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(52, 50, 49, 0.25);
+        }
+
+        .stat-value {
+            font-family: 'Gotham', sans-serif;
+            font-size: 35px;
+            font-weight: bold;
+            background: linear-gradient(90deg, rgba(52, 50, 49, 0.82) 0%, #343231 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-value-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .stat-icon {
+            width: 35px;
+            height: 35px;
+            color: #14181B;
+        }
+
+        /* Goals Section */
+        .goals-section {
+            padding: 20px 22px 0 22px;
+        }
+
+        .goals-title {
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(52, 50, 49, 0.25);
+            margin-bottom: 10px;
+        }
+
+        .goals-scroll {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .goal-card {
+            min-width: 114px;
+            height: 155px;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+        }
+
+        .goal-card.purple {
+            background-image: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/38suxi4jhj67/pub.png');
+        }
+
+        .goal-card.blue {
+            background-image: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/dbih8uyn7ko0/bb.png');
+        }
+
+        .goal-card.white {
+            background-image: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/pmf343htcvjz/wb.png');
+        }
+
+        .goal-card.pink {
+            background-image: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/5yntoadjn8cy/pb.png');
+        }
+
+        .goal-value {
+            position: absolute;
+            top: 23px;
+            left: 24px;
+            right: 24px;
+            text-align: center;
+            font-family: 'Gotham', sans-serif;
+            font-size: 80px;
+            font-weight: 900;
+            line-height: 0.8;
+            color: rgba(253, 252, 243, 0.23);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .goal-value-digit {
+            line-height: 0.7;
+        }
+
+        .goal-name {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            right: 12px;
+            text-align: center;
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFFFFF;
+            transform: translateY(-50%);
+        }
+
+        .goal-input {
+            position: absolute;
+            top: 23px;
+            left: 24px;
+            right: 24px;
+            text-align: center;
+            font-family: 'Gotham', sans-serif;
+            font-size: 80px;
+            font-weight: 900;
+            line-height: 0.8;
+            color: rgba(253, 252, 243, 0.23);
+            background: transparent;
+            border: none;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            outline: none;
+        }
+
+        .goal-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .hint-text {
+            font-family: 'Gotham', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            color: rgba(52, 50, 49, 0.25);
+            font-style: italic;
+            padding: 10px 22px 0 22px;
+        }
+
+        /* Info Card */
+        .info-card {
+            margin: 20px 22px;
+            border-radius: 24px;
+            border: 3px solid rgba(52, 50, 49, 0.25);
+            padding: 10px 14px;
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .info-card-title {
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(52, 50, 49, 0.25);
+        }
+
+        .info-card-icon {
+            width: 16px;
+            height: 16px;
+            color: rgba(52, 50, 49, 0.25);
+            cursor: pointer;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(52, 50, 49, 0.25);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #343231;
+        }
+
+        /* Bottom Actions */
+        .bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: linear-gradient(0deg, rgba(253, 252, 243, 1) 0%, rgba(253, 252, 243, 0) 100%);
+            padding: 20px;
+        }
+
+        .buttons-row {
+            display: flex;
+            justify-content: space-evenly;
+            gap: 16px;
+        }
+
+        .action-btn {
+            width: calc(50% - 8px);
+            max-width: 172px;
+            height: 70px;
+            border-radius: 30px;
+            border: none;
+            font-family: 'Gotham', sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .action-btn.buy {
+            background: #9BDE8F;
+            border: 5px solid #7CE16B;
+            box-shadow: 0 10px 20px #7CE16B;
+        }
+
+        .action-btn.sell {
+            background: #F97A7A;
+            border: 5px solid #FD5E5E;
+            box-shadow: 0 10px 20px #FD5E5E;
+        }
+
+        /* Fullscreen Button */
+        .fullscreen-btn {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(52, 50, 49, 0.25);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-family: 'Gotham', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(52, 50, 49, 0.7);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.2s;
+        }
+
+        .fullscreen-btn:hover {
+            background: #FFFFFF;
+            transform: scale(1.05);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #FDFCF3 0%, #FFFFFF 100%);
+            border-radius: 32px;
+            padding: 40px 36px 48px;
+            max-width: 380px;
+            max-height: 80vh;
+            text-align: center;
+            animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+            opacity: 0;
+            animation: modalShine 0.6s ease-out 0.2s;
+        }
+
+        @keyframes modalPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(50px);
+            }
+            70% {
+                transform: scale(1.05) translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes modalShine {
+            0% {
+                opacity: 1;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px) rotate(0deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+
+        .modal-icon-container {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: iconBounce 0.6s ease-out 0.2s;
+            position: relative;
+        }
+
+        .modal-icon-container.buy {
+            background: linear-gradient(135deg, #7CE16B 0%, #5CB85C 100%);
+            box-shadow: 0 8px 24px rgba(124, 225, 107, 0.4);
+        }
+
+        .modal-icon-container.sell {
+            background: linear-gradient(135deg, #FD5E5E 0%, #E04545 100%);
+            box-shadow: 0 8px 24px rgba(253, 94, 94, 0.4);
+        }
+
+        .modal-icon {
+            width: 50px;
+            height: 50px;
+            color: white;
+        }
+
+        .modal-transaction {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .modal-transaction.buy {
+            background: linear-gradient(135deg, #7CE16B 0%, #5CB85C 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124, 225, 107, 0.4);
+        }
+
+        .modal-transaction.sell {
+            background: linear-gradient(135deg, #FD5E5E 0%, #E04545 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(253, 94, 94, 0.4);
+        }
+
+        .modal-main-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .modal-shares {
+            font-family: 'Gotham', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .modal-shares.buy {
+            background: linear-gradient(135deg, #7CE16B 0%, #5CB85C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-shares.sell {
+            background: linear-gradient(135deg, #FD5E5E 0%, #E04545 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-stock-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #343231;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: modalPop 0.5s ease-out 0.25s;
+        }
+
+        .modal-stock-name {
+            font-family: 'Gotham', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #343231;
+            line-height: 1.2;
+        }
+
+        .modal-action-text {
+            font-size: 14px;
+            color: rgba(52, 50, 49, 0.4);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .modal-hint {
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(52, 50, 49, 0.6);
+            font-style: italic;
+            padding-top: 16px;
+            border-top: 1px solid rgba(52, 50, 49, 0.1);
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            animation: confettiFall 0.8s ease-out forwards;
+        }
+
+        /* File Input Hidden */
+        #profileImageInput {
+            display: none;
+        }
+
+        /* Share Section */
+        .share-section {
+            padding: 20px 36px;
+        }
+
+        .share-btn {
+            width: 100%;
+            height: 50px;
+            border-radius: 30px;
+            border: 4px solid #343231;
+            background: transparent;
+            font-family: 'Gotham', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: #14181B;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .share-btn:hover {
+            background: rgba(52, 50, 49, 0.1);
+        }
+
+        .share-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* HIN Section */
+        .hin-section {
+            padding: 0 36px;
+            text-align: center;
+        }
+
+        .hin-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-family: 'Gotham', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(20, 24, 27, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .hin-info {
+            width: 18px;
+            height: 18px;
+            color: rgba(20, 24, 27, 0.4);
+            cursor: pointer;
+        }
+
+        .hin-value {
+            font-family: 'Gotham', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(20, 24, 27, 0.4);
+            cursor: pointer;
+            padding: 10px 0 200px 0;
+        }
+
+        .hin-value:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <!-- Fullscreen Button -->
+        <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+
+        <!-- Header -->
+        <div class="header">
+            <button class="back-button" onclick="generateRandomPrice()" title="Generate Random Price">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+            <div class="logo-container">
+                <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/y9j0ewuqet5q/pipolll.png" alt="Pipoll Logo" class="logo">
+            </div>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-image-container">
+                    <div class="profile-image-wrapper" onclick="triggerImageUpload()">
+                        <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/537mlvdjnxgw/22.png" alt="Profile" class="profile-image" id="profileImage">
+                    </div>
+                    <input type="file" id="profileImageInput" accept="image/*" onchange="updateProfileImage(event)">
+                </div>
+                <div class="info-section">
+                    <div class="name-container">
+                        <input type="text" class="name-input" id="nameInput" value="Donald Trump" onclick="this.select()">
+                    </div>
+                    <div class="price-row">
+                        <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/ve61vd3of6cf/arrowup.png" alt="Up" class="price-arrow" id="priceArrow">
+                        <span class="price" id="priceValue">345.8</span>
+                    </div>
+                    <div class="percentage-container" id="percentageContainer">
+                        <span class="percentage positive" id="percentageValue">+2.1%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="chart-container">
+                <div class="chart-placeholder" id="chartPlaceholder">
+                    <svg class="chart-svg" id="chartSvg" viewBox="0 0 400 200" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="chartGradientGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#7CE16B" stop-opacity="0.7"/>
+                                <stop offset="100%" stop-color="#7CE16B" stop-opacity="0"/>
+                            </linearGradient>
+                            <linearGradient id="chartGradientRed" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#FD5E5E" stop-opacity="0.7"/>
+                                <stop offset="100%" stop-color="#FD5E5E" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <path id="chartArea" class="chart-area" fill="url(#chartGradientGreen)"/>
+                        <path id="chartLine" class="chart-line" stroke="#7CE16B"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Time Periods -->
+            <div class="time-periods">
+                <button class="time-btn">1W</button>
+                <button class="time-btn">1M</button>
+                <button class="time-btn active">YTD</button>
+                <button class="time-btn">ALL</button>
+            </div>
+
+            <!-- Goals Section -->
+            <div class="goals-section">
+                <div class="goals-title">Goals</div>
+                <div class="goals-scroll">
+                    <div class="goal-card purple" onclick="editGoalValue(this)">
+                        <div class="goal-value" id="goalValue1">
+                            <span class="goal-value-digit">3</span>
+                            <span class="goal-value-digit">5</span>
+                        </div>
+                        <div class="goal-name">Avoid laziness</div>
+                    </div>
+                    <div class="goal-card blue" onclick="editGoalValue(this)">
+                        <div class="goal-value" id="goalValue2">
+                            <span class="goal-value-digit">2</span>
+                            <span class="goal-value-digit">5</span>
+                        </div>
+                        <div class="goal-name">Avoid laziness</div>
+                    </div>
+                    <div class="goal-card white" onclick="editGoalValue(this)">
+                        <div class="goal-value" id="goalValue3">
+                            <span class="goal-value-digit">3</span>
+                            <span class="goal-value-digit">0</span>
+                        </div>
+                        <div class="goal-name">Avoid laziness</div>
+                    </div>
+                    <div class="goal-card pink" onclick="editGoalValue(this)">
+                        <div class="goal-value" id="goalValue4">
+                            <span class="goal-value-digit">2</span>
+                            <span class="goal-value-digit">0</span>
+                        </div>
+                        <div class="goal-name">Avoid laziness</div>
+                    </div>
+                </div>
+                <div class="hint-text">Hint: Numbers on the back represent goal weight</div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Investors</div>
+                    <div class="stat-value">65</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Streak</div>
+                    <div class="stat-value-row">
+                        <span class="stat-value">45</span>
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <span class="info-card-title">Stats</span>
+                    <svg class="info-card-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Country</span>
+                    <span class="info-label">United States</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Age</span>
+                    <span class="info-label">17</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Gender</span>
+                    <span class="info-label">male</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Ranking</span>
+                    <span class="info-label">#5 in USA</span>
+                </div>
+            </div>
+
+            <!-- Share Section -->
+            <div class="share-section">
+                <button class="share-btn">
+                    <svg class="share-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                    </svg>
+                    Share
+                </button>
+            </div>
+
+            <!-- HIN Section -->
+            <div class="hin-section">
+                <div class="hin-label">
+                    HIN:
+                    <svg class="hin-info" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    </svg>
+                </div>
+                <div class="hin-value" onclick="copyHIN()" title="Click to copy">#A29-j28sk9</div>
+            </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="bottom-actions">
+            <div class="buttons-row">
+                <button class="action-btn buy" id="buyBtn" onclick="handleBuy()">
+                    <span>Buy</span>
+                </button>
+                <button class="action-btn sell" id="sellBtn" onclick="handleSell()">
+                    <span>Sell</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <div class="modal-icon-container" id="modalIconContainer">
+                <svg class="modal-icon" id="modalIcon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            </div>
+            <div class="modal-transaction buy" id="modalTransaction">BOUGHT</div>
+            <div class="modal-action-text">You just</div>
+            <div class="modal-main-text">
+                <span class="modal-shares buy" id="modalShares">0.25 shares</span>
+                <div class="modal-stock-row">
+                    <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/537mlvdjnxgw/22.png" alt="Profile" class="modal-profile-pic" id="modalProfilePic">
+                    <span class="modal-stock-name" id="modalStockName">Donald Trump</span>
+                </div>
+            </div>
+            <div class="modal-hint">Stay tuned if they reach their goals</div>
+        </div>
+    </div>
+
+    <script>
+        let currentPrice = 345.8;
+        let isPositive = true;
+        let chartData = [];
+
+        // Generate realistic stock-like chart data with natural ups and downs
+        function generateChartData(startValue, endValue) {
+            const numPoints = 50;
+            const points = [];
+            let currentValue = startValue;
+
+            // Determine overall trend direction
+            const isUptrend = endValue > startValue;
+            const targetEnd = endValue;
+
+            // Multiple small turning points for natural zigzag
+            const turningPoints = [];
+            const numTurningPoints = Math.floor(Math.random() * 4) + 5; // 5-8 turning points
+            for (let i = 0; i < numTurningPoints; i++) {
+                turningPoints.push({
+                    pos: Math.floor(Math.random() * 70) + 5,
+                    strength: (Math.random() * 0.025 + 0.01) * (Math.random() > 0.5 ? 1 : -1)
+                });
+            }
+            turningPoints.sort((a, b) => a.pos - b.pos);
+
+            for (let i = 0; i < numPoints; i++) {
+                const progress = i / (numPoints - 1);
+
+                // Moderate base volatility
+                let baseVolatility = 0.018 + Math.random() * 0.012;
+
+                // Momentum from recent price action (creates natural swings)
+                const recentMomentum = i > 2 ? (points[i-1] - points[i-3]) / 2 : 0;
+
+                // Counter-momentum to prevent too much straight-line movement
+                const counterMomentum = i > 1 ? -recentMomentum * 0.3 : 0;
+
+                // Random noise - the main source of ups and downs
+                const noise = (Math.random() - 0.5) * baseVolatility * currentValue;
+
+                // Gentle trend pull towards end value (not too strong)
+                const remaining = targetEnd - currentValue;
+                const trendPull = remaining * (0.01 + 0.015 * progress);
+
+                // Turning point influence - creates natural zigzag pattern
+                let turningInfluence = 0;
+                for (const tp of turningPoints) {
+                    const dist = Math.abs(i - tp.pos);
+                    if (dist < 12) {
+                        const influence = (1 - dist / 12) * tp.strength * currentValue;
+                        turningInfluence += influence;
+                    }
+                }
+
+                // Occasional small spikes (not too dramatic)
+                let spikeInfluence = 0;
+                if (Math.random() < 0.04 && i > 3 && i < 75) {
+                    spikeInfluence = (Math.random() - 0.5) * 0.025 * currentValue;
+                }
+
+                // Mean reversion - price tends to return toward average
+                const averagePrice = (startValue + endValue) / 2;
+                const meanReversion = (averagePrice - currentValue) * 0.003;
+
+                // Calculate total change
+                const change = trendPull + noise + (recentMomentum + counterMomentum) * 0.4 +
+                              turningInfluence + spikeInfluence + meanReversion;
+                currentValue += change;
+
+                // Keep within reasonable bounds
+                const minBound = Math.min(startValue, endValue) * 0.85;
+                const maxBound = Math.max(startValue, endValue) * 1.15;
+                currentValue = Math.max(minBound, Math.min(maxBound, currentValue));
+
+                points.push(currentValue);
+            }
+
+            // Ensure last point matches endValue exactly
+            points[numPoints - 1] = endValue;
+
+            // Smooth transition to end value
+            for (let i = numPoints - 5; i < numPoints - 1; i++) {
+                const t = (i - (numPoints - 5)) / 5;
+                points[i] = points[i] * (1 - t) + endValue * t;
+            }
+
+            // Very light smoothing to keep the zigzag but remove harsh jumps
+            const smoothed = [];
+            for (let i = 0; i < points.length; i++) {
+                if (i === 0 || i === points.length - 1) {
+                    smoothed.push(points[i]);
+                } else {
+                    smoothed.push(points[i-1] * 0.1 + points[i] * 0.8 + points[i+1] * 0.1);
+                }
+            }
+
+            return smoothed;
+        }
+
+        // Draw chart
+        function drawChart(data) {
+            const svg = document.getElementById('chartSvg');
+            const width = 400;
+            const height = 200;
+            const padding = 10;
+
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min;
+
+            // Scale data to fit SVG
+            const scaledData = data.map((value, index) => {
+                const x = (index / (data.length - 1)) * (width - padding * 2) + padding;
+                const y = height - padding - ((value - min) / range) * (height - padding * 2);
+                return { x, y };
+            });
+
+            // Create line path with smooth curves
+            let linePath = `M ${scaledData[0].x} ${scaledData[0].y}`;
+
+            for (let i = 1; i < scaledData.length; i++) {
+                const prev = scaledData[i - 1];
+                const curr = scaledData[i];
+                const cp1x = prev.x + (curr.x - prev.x) / 3;
+                const cp1y = prev.y;
+                const cp2x = prev.x + 2 * (curr.x - prev.x) / 3;
+                const cp2y = curr.y;
+                linePath += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
+            }
+
+            // Create area path (gradient below line)
+            let areaPath = `M ${scaledData[0].x} ${height - padding}`;
+            areaPath += ` L ${scaledData[0].x} ${scaledData[0].y}`;
+
+            for (let i = 1; i < scaledData.length; i++) {
+                const prev = scaledData[i - 1];
+                const curr = scaledData[i];
+                const cp1x = prev.x + (curr.x - prev.x) / 3;
+                const cp1y = prev.y;
+                const cp2x = prev.x + 2 * (curr.x - prev.x) / 3;
+                const cp2y = curr.y;
+                areaPath += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
+            }
+
+            areaPath += ` L ${scaledData[scaledData.length - 1].x} ${height - padding} Z`;
+
+            // Update SVG
+            const color = isPositive ? '#7CE16B' : '#FD5E5E';
+            const gradientId = isPositive ? 'chartGradientGreen' : 'chartGradientRed';
+
+            document.getElementById('chartLine').setAttribute('d', linePath);
+            document.getElementById('chartLine').setAttribute('stroke', color);
+            document.getElementById('chartArea').setAttribute('d', areaPath);
+            document.getElementById('chartArea').setAttribute('fill', `url(#${gradientId})`);
+
+            // Remove background gradient from container
+            document.getElementById('chartPlaceholder').style.background = 'transparent';
+        }
+
+        // Generate random price and update chart
+        function generateRandomPrice() {
+            const newPrice = (Math.random() * 250 + 70).toFixed(1);
+            const previousPrice = currentPrice;
+            currentPrice = parseFloat(newPrice);
+
+            isPositive = newPrice >= previousPrice;
+
+            // Generate percentage change
+            const percentChange = isPositive
+                ? (Math.random() * 19 + 1).toFixed(1)
+                : -(Math.random() * 19 + 1).toFixed(1);
+
+            // Update UI
+            document.getElementById('priceValue').textContent = newPrice;
+
+            const percentageEl = document.getElementById('percentageValue');
+            const containerEl = document.getElementById('percentageContainer');
+            const arrowEl = document.getElementById('priceArrow');
+
+            if (isPositive) {
+                percentageEl.textContent = `+${percentChange}%`;
+                percentageEl.className = 'percentage positive';
+                containerEl.style.background = 'rgba(145, 225, 107, 0.57)';
+                arrowEl.src = 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/ve61vd3of6cf/arrowup.png';
+            } else {
+                percentageEl.textContent = `${percentChange}%`;
+                percentageEl.className = 'percentage negative';
+                containerEl.style.background = 'rgba(253, 94, 94, 0.6)';
+                arrowEl.src = 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/05b2yuuelm8m/arrowdown.png';
+            }
+
+            // Generate and draw chart
+            chartData = generateChartData(previousPrice, currentPrice);
+            drawChart(chartData);
+        }
+
+        // Trigger image upload
+        function triggerImageUpload() {
+            document.getElementById('profileImageInput').click();
+        }
+
+        // Update profile image
+        function updateProfileImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Edit goal value
+        function editGoalValue(goalCard) {
+            const goalValueEl = goalCard.querySelector('.goal-value');
+            const currentText = goalValueEl.textContent.trim();
+
+            const input = prompt('Enter new goal value:', currentText);
+            if (input !== null && input.trim() !== '') {
+                const newValue = input.trim();
+                // Split into individual digits and stack them
+                const digits = newValue.split('').map(d => `<span class="goal-value-digit">${d}</span>`).join('');
+                goalValueEl.innerHTML = digits;
+            }
+        }
+
+        // Handle Buy
+        function handleBuy() {
+            const name = document.getElementById('nameInput').value;
+            const profilePic = document.getElementById('profileImage').src;
+
+            // Set icon (checkmark for buy)
+            document.getElementById('modalIcon').innerHTML = '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>';
+            document.getElementById('modalIconContainer').className = 'modal-icon-container buy';
+
+            // Set transaction badge
+            const transactionEl = document.getElementById('modalTransaction');
+            transactionEl.textContent = 'BOUGHT';
+            transactionEl.className = 'modal-transaction buy';
+
+            // Set shares text
+            const sharesEl = document.getElementById('modalShares');
+            sharesEl.textContent = '0.25 shares';
+            sharesEl.className = 'modal-shares buy';
+
+            // Set profile picture
+            document.getElementById('modalProfilePic').src = profilePic;
+
+            // Set stock name
+            document.getElementById('modalStockName').textContent = name;
+
+            // Reset animation
+            const modalContent = document.querySelector('.modal-content');
+            modalContent.style.animation = 'none';
+            modalContent.offsetHeight; // Trigger reflow
+            modalContent.style.animation = 'modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+            // Create confetti
+            createConfetti('buy');
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        // Handle Sell
+        function handleSell() {
+            const name = document.getElementById('nameInput').value;
+            const profilePic = document.getElementById('profileImage').src;
+
+            // Set icon (price tag for sell)
+            document.getElementById('modalIcon').innerHTML = '<path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>';
+            document.getElementById('modalIconContainer').className = 'modal-icon-container sell';
+
+            // Set transaction badge
+            const transactionEl = document.getElementById('modalTransaction');
+            transactionEl.textContent = 'SOLD';
+            transactionEl.className = 'modal-transaction sell';
+
+            // Set shares text
+            const sharesEl = document.getElementById('modalShares');
+            sharesEl.textContent = '0.25 shares';
+            sharesEl.className = 'modal-shares sell';
+
+            // Set profile picture
+            document.getElementById('modalProfilePic').src = profilePic;
+
+            // Set stock name
+            document.getElementById('modalStockName').textContent = name;
+
+            // Reset animation
+            const modalContent = document.querySelector('.modal-content');
+            modalContent.style.animation = 'none';
+            modalContent.offsetHeight; // Trigger reflow
+            modalContent.style.animation = 'modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+            // Create confetti
+            createConfetti('sell');
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        // Create confetti effect
+        function createConfetti(type) {
+            const colors = type === 'buy'
+                ? ['#7CE16B', '#5CB85C', '#4CAF50', '#8BC34A', '#CDDC39']
+                : ['#FD5E5E', '#E04545', '#F44336', '#FF5252', '#FF8A80'];
+
+            const modalContent = document.querySelector('.modal-content');
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = -10 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+                modalContent.appendChild(confetti);
+
+                // Remove confetti after animation
+                setTimeout(() => confetti.remove(), 1500);
+            }
+        }
+
+        // Close modal
+        function closeModal(event) {
+            if (event.target === event.currentTarget) {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+        }
+
+        // Copy HIN
+        function copyHIN() {
+            const hin = '#A29-j28sk9';
+            navigator.clipboard.writeText(hin).then(() => {
+                alert('HIN copied to clipboard!');
+            });
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            const container = document.getElementById('container');
+            const btn = document.getElementById('fullscreenBtn');
+
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().then(() => {
+                    btn.style.display = 'none';
+                });
+            }
+        }
+
+        // Initialize chart on load
+        window.onload = function() {
+            chartData = generateChartData(300, 345.8);
+            drawChart(chartData);
+        };
+
+        // Handle escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
