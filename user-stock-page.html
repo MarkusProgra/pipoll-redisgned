@@ -26,6 +26,30 @@
             position: relative;
         }
 
+        /* Safe area for notched devices */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+        }
+
+        /* Black background for status bar area */
+        body {
+            background-color: #000000;
+        }
+
+        .container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: env(safe-area-inset-top, 0px);
+            background-color: #000000;
+            z-index: 9998;
+        }
+
         /* Header Section */
         .header {
             padding: 50px 30px 20px 30px;
@@ -489,7 +513,7 @@
             width: 100%;
             max-width: 430px;
             background: linear-gradient(0deg, rgba(253, 252, 243, 1) 0%, rgba(253, 252, 243, 0) 100%);
-            padding: 20px;
+            padding: 28px 20px 20px 20px;
         }
 
         .buttons-row {
@@ -1322,15 +1346,12 @@
 
         // Edit goal value
         function editGoalValue(goalCard) {
-            const goalValueEl = goalCard.querySelector('.goal-value');
-            const currentText = goalValueEl.textContent.trim();
+            const goalNameEl = goalCard.querySelector('.goal-name');
+            const currentText = goalNameEl.textContent.trim();
 
-            const input = prompt('Enter new goal value:', currentText);
+            const input = prompt('Enter new goal name:', currentText);
             if (input !== null && input.trim() !== '') {
-                const newValue = input.trim();
-                // Split into individual digits and stack them
-                const digits = newValue.split('').map(d => `<span class="goal-value-digit">${d}</span>`).join('');
-                goalValueEl.innerHTML = digits;
+                goalNameEl.textContent = input.trim();
             }
         }
 
@@ -1522,14 +1543,21 @@
             document.body.style.top = '0';
             document.body.style.left = '0';
 
+            // Get exact viewport dimensions
+            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
             container.style.position = 'fixed';
             container.style.top = '0';
             container.style.left = '0';
-            container.style.width = '100vw';
-            container.style.height = '100vh';
+            container.style.width = vw + 'px';
+            container.style.height = vh + 'px';
             container.style.zIndex = '9999';
             container.style.backgroundColor = '#1a1a2e';
             container.style.overflow = 'hidden';
+            container.style.maxWidth = 'none';
+            container.style.right = '0';
+            container.style.bottom = '0';
             btn.style.display = 'none';
 
             // Set viewport meta for better fullscreen
