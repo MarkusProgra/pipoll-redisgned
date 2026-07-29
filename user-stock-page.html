@@ -568,7 +568,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 10000;
         }
 
         .modal-overlay.active {
@@ -1400,38 +1400,49 @@
             const container = document.getElementById('container');
             const btn = document.getElementById('fullscreenBtn');
 
-            // Check for fullscreen support with vendor prefixes for mobile
-            const requestFullscreen = container.requestFullscreen ||
-                                      container.webkitRequestFullscreen ||
-                                      container.mozRequestFullScreen ||
-                                      container.msRequestFullscreen;
+            // For Safari iOS and mobile browsers, always use simulated fullscreen
+            // Native fullscreen doesn't hide browser UI on mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-            const exitFullscreen = document.exitFullscreen ||
-                                   document.webkitExitFullscreen ||
-                                   document.mozCancelFullScreen ||
-                                   document.msExitFullscreen;
-
-            if (!document.fullscreenElement && !document.webkitFullscreenElement &&
-                !document.mozFullScreenElement && !document.msFullscreenElement) {
-                if (requestFullscreen) {
-                    requestFullscreen.call(container).then(() => {
-                        btn.style.display = 'none';
-                    }).catch(err => {
-                        console.log('Fullscreen error:', err);
-                        // Fallback: simulate fullscreen by expanding container
-                        enterSimulatedFullscreen();
-                    });
+            if (isMobile) {
+                // Check if we're already in simulated fullscreen
+                if (container.dataset.simulatedFullscreen === 'true') {
+                    exitSimulatedFullscreen();
                 } else {
-                    // Fallback for browsers without fullscreen API
                     enterSimulatedFullscreen();
                 }
             } else {
-                if (exitFullscreen) {
-                    exitFullscreen.call(document).then(() => {
-                        btn.style.display = 'block';
-                    });
+                // Desktop: try native fullscreen first
+                const requestFullscreen = container.requestFullscreen ||
+                                          container.webkitRequestFullscreen ||
+                                          container.mozRequestFullScreen ||
+                                          container.msRequestFullscreen;
+
+                const exitFullscreen = document.exitFullscreen ||
+                                       document.webkitExitFullscreen ||
+                                       document.mozCancelFullScreen ||
+                                       document.msExitFullscreen;
+
+                if (!document.fullscreenElement && !document.webkitFullscreenElement &&
+                    !document.mozFullScreenElement && !document.msFullscreenElement) {
+                    if (requestFullscreen) {
+                        requestFullscreen.call(container).then(() => {
+                            btn.style.display = 'none';
+                        }).catch(err => {
+                            console.log('Fullscreen error:', err);
+                            enterSimulatedFullscreen();
+                        });
+                    } else {
+                        enterSimulatedFullscreen();
+                    }
                 } else {
-                    exitSimulatedFullscreen();
+                    if (exitFullscreen) {
+                        exitFullscreen.call(document).then(() => {
+                            btn.style.display = 'block';
+                        });
+                    } else {
+                        exitSimulatedFullscreen();
+                    }
                 }
             }
         }
