@@ -538,22 +538,64 @@
             position: fixed;
             top: 60px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border: 2px solid rgba(52, 50, 49, 0.25);
             border-radius: 20px;
-            padding: 8px 16px;
+            padding: 10px 18px;
             font-family: 'Gotham', sans-serif;
             font-size: 12px;
-            font-weight: 600;
-            color: rgba(52, 50, 49, 0.7);
+            font-weight: 700;
+            color: #343231;
             cursor: pointer;
             z-index: 1000;
             transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .fullscreen-btn:hover {
             background: #FFFFFF;
             transform: scale(1.05);
+        }
+
+        /* iOS Home Screen Hint */
+        .ios-hint {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px 24px;
+            max-width: 280px;
+            text-align: center;
+            z-index: 9998;
+            display: none;
+            animation: fadeInOut 4s ease-out forwards;
+        }
+
+        .ios-hint.show {
+            display: block;
+        }
+
+        .ios-hint-text {
+            font-family: 'Gotham', sans-serif;
+            font-size: 13px;
+            color: #FFFFFF;
+            line-height: 1.5;
+        }
+
+        .ios-hint-text strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
         }
 
         /* Modal Overlay */
@@ -854,6 +896,14 @@
     <div class="container" id="container">
         <!-- Fullscreen Button -->
         <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+
+        <!-- iOS Home Screen Hint -->
+        <div class="ios-hint" id="iosHint">
+            <div class="ios-hint-text">
+                <strong>For true fullscreen:</strong>
+                Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>
+            </div>
+        </div>
 
         <!-- Header -->
         <div class="header">
@@ -1447,28 +1497,67 @@
             }
         }
 
+        // Detect iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isAndroid = /Android/.test(navigator.userAgent);
+        const isMobile = isIOS || isAndroid;
+
         // Simulated fullscreen for mobile fallback
         function enterSimulatedFullscreen() {
             const container = document.getElementById('container');
             const btn = document.getElementById('fullscreenBtn');
 
+            // Show iOS hint for first time users
+            if (isIOS && !localStorage.getItem('pipollFullscreenHintShown')) {
+                document.getElementById('iosHint').classList.add('show');
+                localStorage.setItem('pipollFullscreenHintShown', 'true');
+            }
+
+            // Hide all scrollbars
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.height = '100%';
+            document.body.style.top = '0';
+            document.body.style.left = '0';
+
             container.style.position = 'fixed';
             container.style.top = '0';
             container.style.left = '0';
-            container.style.width = '100%';
-            container.style.height = '100%';
+            container.style.width = '100vw';
+            container.style.height = '100vh';
             container.style.zIndex = '9999';
             container.style.backgroundColor = '#1a1a2e';
-            document.body.style.overflow = 'hidden';
+            container.style.overflow = 'hidden';
             btn.style.display = 'none';
 
-            // Store state for exit
+            // Set viewport meta for better fullscreen
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+            }
+
+            // Store scroll position
+            container.dataset.scrollPos = window.scrollY;
             container.dataset.simulatedFullscreen = 'true';
+
+            // Scroll to top
+            window.scrollTo(0, 0);
         }
 
         function exitSimulatedFullscreen() {
             const container = document.getElementById('container');
             const btn = document.getElementById('fullscreenBtn');
+
+            // Restore scrollbars
+            document.documentElement.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.overflow = '';
 
             container.style.position = '';
             container.style.top = '';
@@ -1477,8 +1566,18 @@
             container.style.height = '';
             container.style.zIndex = '';
             container.style.backgroundColor = '';
-            document.body.style.overflow = '';
+            container.style.overflow = '';
             btn.style.display = 'block';
+
+            // Restore viewport
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+            }
+
+            // Restore scroll position
+            const scrollPos = container.dataset.scrollPos || 0;
+            window.scrollTo(0, scrollPos);
 
             container.dataset.simulatedFullscreen = 'false';
         }
