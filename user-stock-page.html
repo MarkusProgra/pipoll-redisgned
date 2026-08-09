@@ -257,6 +257,8 @@
         .chart-line {
             fill: none;
             stroke-width: 3;
+            stroke-linejoin: miter;
+            stroke-linecap: butt;
         }
 
         .chart-area {
@@ -1134,99 +1136,67 @@
         let isPositive = true;
         let chartData = [];
 
-        // Generate realistic stock-like chart data with natural ups and downs
+        // Generate a stock-like series from random trend runs
         function generateChartData(startValue, endValue) {
-            const numPoints = 50;
+            const numPoints = 90;
             const points = [];
-            let currentValue = startValue;
+            let value = startValue;
 
-            // Determine overall trend direction
-            const isUptrend = endValue > startValue;
-            const targetEnd = endValue;
-
-            // Multiple small turning points for natural zigzag
-            const turningPoints = [];
-            const numTurningPoints = Math.floor(Math.random() * 4) + 5; // 5-8 turning points
-            for (let i = 0; i < numTurningPoints; i++) {
-                turningPoints.push({
-                    pos: Math.floor(Math.random() * 70) + 5,
-                    strength: (Math.random() * 0.025 + 0.01) * (Math.random() > 0.5 ? 1 : -1)
-                });
+            // Each regime is a run of points with its own slope.
+            // Lengths and strengths are random, so the rhythm never repeats.
+            const regimes = [];
+            let filled = 0;
+            let lastDir = Math.random() > 0.5 ? 1 : -1;
+            while (filled < numPoints) {
+                const len = Math.floor(Math.random() * 11) + 5;        // 5-15 points per trend
+                const dir = Math.random() < 0.78 ? -lastDir : lastDir; // mostly reverse, sometimes extend
+                const slope = dir * (0.004 + Math.random() * 0.016);   // 0.4%-2.0% per point
+                regimes.push({ len, slope });
+                lastDir = dir;
+                filled += len;
             }
-            turningPoints.sort((a, b) => a.pos - b.pos);
 
+            let r = 0;
+            let inRegime = 0;
             for (let i = 0; i < numPoints; i++) {
-                const progress = i / (numPoints - 1);
-
-                // Moderate base volatility
-                let baseVolatility = 0.018 + Math.random() * 0.012;
-
-                // Momentum from recent price action (creates natural swings)
-                const recentMomentum = i > 2 ? (points[i-1] - points[i-3]) / 2 : 0;
-
-                // Counter-momentum to prevent too much straight-line movement
-                const counterMomentum = i > 1 ? -recentMomentum * 0.3 : 0;
-
-                // Random noise - the main source of ups and downs
-                const noise = (Math.random() - 0.5) * baseVolatility * currentValue;
-
-                // Gentle trend pull towards end value (not too strong)
-                const remaining = targetEnd - currentValue;
-                const trendPull = remaining * (0.01 + 0.015 * progress);
-
-                // Turning point influence - creates natural zigzag pattern
-                let turningInfluence = 0;
-                for (const tp of turningPoints) {
-                    const dist = Math.abs(i - tp.pos);
-                    if (dist < 12) {
-                        const influence = (1 - dist / 12) * tp.strength * currentValue;
-                        turningInfluence += influence;
-                    }
+                if (inRegime >= regimes[r].len && r < regimes.length - 1) {
+                    r++;
+                    inRegime = 0;
                 }
+                const regime = regimes[r];
+                inRegime++;
 
-                // Occasional small spikes (not too dramatic)
-                let spikeInfluence = 0;
-                if (Math.random() < 0.04 && i > 3 && i < 75) {
-                    spikeInfluence = (Math.random() - 0.5) * 0.025 * currentValue;
-                }
+                // Ease the slope in and out of each run so tops and bottoms turn over
+                const t = inRegime / regime.len;
+                const drift = regime.slope * Math.sin(Math.PI * t) * value;
 
-                // Mean reversion - price tends to return toward average
-                const averagePrice = (startValue + endValue) / 2;
-                const meanReversion = (averagePrice - currentValue) * 0.003;
+                // Light noise so the line is never perfectly clean
+                const noise = (Math.random() - 0.5) * 0.006 * value;
 
-                // Calculate total change
-                const change = trendPull + noise + (recentMomentum + counterMomentum) * 0.4 +
-                              turningInfluence + spikeInfluence + meanReversion;
-                currentValue += change;
+                // Gentle pull so the series arrives near the target price
+                const pull = (endValue - value) * 0.012 * (i / (numPoints - 1));
 
-                // Keep within reasonable bounds
-                const minBound = Math.min(startValue, endValue) * 0.85;
-                const maxBound = Math.max(startValue, endValue) * 1.15;
-                currentValue = Math.max(minBound, Math.min(maxBound, currentValue));
+                value += drift + noise + pull;
 
-                points.push(currentValue);
+                const minBound = Math.min(startValue, endValue) * 0.82;
+                const maxBound = Math.max(startValue, endValue) * 1.18;
+                value = Math.max(minBound, Math.min(maxBound, value));
+
+                points.push(value);
             }
 
-            // Ensure last point matches endValue exactly
+            // Ease onto the displayed price over the final stretch, so the correction is
+            // spread across many points instead of landing on the last few
+            const tailLength = 18;
+            const residual = endValue - points[numPoints - 1];
+            for (let i = numPoints - tailLength; i < numPoints; i++) {
+                const k = (i - (numPoints - tailLength)) / (tailLength - 1);
+                const eased = k * k * (3 - 2 * k); // smoothstep: starts and ends flat
+                points[i] += residual * eased;
+            }
             points[numPoints - 1] = endValue;
 
-            // Smooth transition to end value
-            for (let i = numPoints - 5; i < numPoints - 1; i++) {
-                const t = (i - (numPoints - 5)) / 5;
-                points[i] = points[i] * (1 - t) + endValue * t;
-            }
-
-            // Very light smoothing to keep the zigzag but remove harsh jumps
-            const smoothed = [];
-            for (let i = 0; i < points.length; i++) {
-                if (i === 0 || i === points.length - 1) {
-                    smoothed.push(points[i]);
-                } else {
-                    smoothed.push(points[i-1] * 0.1 + points[i] * 0.8 + points[i+1] * 0.1);
-                }
-            }
-
-            return smoothed;
+            return points;
         }
 
         // Draw chart
@@ -1248,33 +1218,18 @@
                 return { x, y };
             });
 
-            // Create line path with smooth curves
+            // Create line path with straight segments (classic point-to-point)
             let linePath = `M ${scaledData[0].x} ${scaledData[0].y}`;
-
             for (let i = 1; i < scaledData.length; i++) {
-                const prev = scaledData[i - 1];
-                const curr = scaledData[i];
-                const cp1x = prev.x + (curr.x - prev.x) / 3;
-                const cp1y = prev.y;
-                const cp2x = prev.x + 2 * (curr.x - prev.x) / 3;
-                const cp2y = curr.y;
-                linePath += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
+                linePath += ` L ${scaledData[i].x} ${scaledData[i].y}`;
             }
 
             // Create area path (gradient below line)
             let areaPath = `M ${scaledData[0].x} ${height - paddingY}`;
             areaPath += ` L ${scaledData[0].x} ${scaledData[0].y}`;
-
             for (let i = 1; i < scaledData.length; i++) {
-                const prev = scaledData[i - 1];
-                const curr = scaledData[i];
-                const cp1x = prev.x + (curr.x - prev.x) / 3;
-                const cp1y = prev.y;
-                const cp2x = prev.x + 2 * (curr.x - prev.x) / 3;
-                const cp2y = curr.y;
-                areaPath += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`;
+                areaPath += ` L ${scaledData[i].x} ${scaledData[i].y}`;
             }
-
             areaPath += ` L ${scaledData[scaledData.length - 1].x} ${height - paddingY} Z`;
 
             // Update SVG
