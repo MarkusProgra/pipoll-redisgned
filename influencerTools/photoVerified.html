@@ -86,17 +86,16 @@
     /* Planet */
     .planet-wrap { display: flex; justify-content: center; }
     .planet {
-        width: min(320px, 72vw);
+        width: min(310px, 70vw, 34vh);
         aspect-ratio: 1;
-        object-fit: cover;
-        border-radius: 50%;
+        object-fit: contain;
     }
 
-    .dots { display: flex; justify-content: space-evenly; align-items: flex-start; }
+    .dots { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 70px 0 70px; }
     .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.27); }
     .dot.active { background: var(--alternate); }
-    .dot.low { margin-bottom: 34px; }
-    .dot.high { margin-bottom: 12px; }
+    .dot.low { margin-bottom: 22px; }
+    .dot.high { margin-bottom: 6px; }
 
     /* Bottom sheet */
     .sheet {
@@ -105,13 +104,14 @@
         border-radius: 40px 40px 0 0;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        padding: 4px 0 calc(24px + env(safe-area-inset-bottom, 0px)) 0;
+        min-height: 290px;
+        padding: 22px 0 0 0;
     }
 
     .descrip {
-        padding: 18px 40px 0 40px;
+        padding: 0 40px 0 40px;
         text-align: center;
         font-size: 16px;
         font-weight: bold;
@@ -143,6 +143,48 @@
     }
     .verify-btn:active { transform: scale(0.97); }
     .verify-btn svg { width: 20px; height: 20px; fill: var(--alternate); }
+
+    /* Nav bar (visual only) */
+    .nav-row {
+        width: 100%;
+        margin-top: auto;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        display: flex;
+        justify-content: space-evenly;
+        align-items: flex-start;
+    }
+
+    .nav-item {
+        position: relative;
+        width: 92px;
+        height: 92px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        padding-bottom: 26px;
+        color: rgba(52, 50, 49, 0.24);
+    }
+    .nav-item.active { color: var(--secondary); }
+    .nav-item.active::before {
+        content: '';
+        position: absolute;
+        top: 6px; left: 50%;
+        width: 92px; height: 92px;
+        transform: translateX(-50%);
+        background: radial-gradient(circle at 50% 45%, rgba(255, 162, 240, 0.35) 0%, rgba(255, 162, 240, 0) 62%);
+        pointer-events: none;
+    }
+    .nav-item svg { width: 35px; height: 35px; fill: currentColor; position: relative; }
+    .nav-item.social svg { width: 40px; height: 40px; }
+    .nav-label {
+        position: relative;
+        margin-top: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        color: currentColor;
+    }
+    .nav-item.social .nav-label { margin-top: 0; }
 
     /* ---------- Camera ---------- */
     .camera {
@@ -444,7 +486,7 @@
         </div>
 
         <div class="planet-wrap">
-            <img class="planet" src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/38suxi4jhj67/pub.png" alt="Goal planet">
+            <img class="planet" src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/gpq4l8cmkfv4/ff1.png" alt="Goal planet">
         </div>
 
         <div class="dots">
@@ -461,6 +503,21 @@
             <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
             Verify with photo
         </button>
+
+        <div class="nav-row">
+        <div class="nav-item active">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.34 0-10 1.67-10 5v2c0 .55.45 1 1 1h18c.55 0 1-.45 1-1v-2c0-3.33-6.66-5-10-5z"/></svg>
+            <span class="nav-label">Habits</span>
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24"><path d="M12 3l8 7v10c0 .55-.45 1-1 1h-5v-6h-4v6H5c-.55 0-1-.45-1-1V10l8-7z"/></svg>
+            <span class="nav-label">Home</span>
+        </div>
+        <div class="nav-item social">
+            <svg viewBox="0 0 24 24"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85-.85-.37-1.79-.58-2.78-.58-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+            <span class="nav-label">Social</span>
+        </div>
+        </div>
     </div>
 </div>
 
