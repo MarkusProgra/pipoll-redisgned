@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Photo Verified - Pipoll</title>
+<style>
+    :root {
+        --alternate: #FDFCF3;   /* cream */
+        --tertiary: #343231;    /* dark */
+        --secondary: #FFA2F0;   /* pink */
+        --success: #7CE16B;     /* green */
+        --danger: #FD5E5E;      /* red */
+        --muted: #595959;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Gotham', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #000000;
+        overflow-x: hidden;
+    }
+
+    .container {
+        position: relative;
+        max-width: 430px;
+        min-height: 100vh;
+        margin: 0 auto;
+        background: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/5w4uhkhewone/stars.png') center/cover no-repeat;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+
+    /* Header */
+    .logo-wrap { padding: 60px 0 10px 0; display: flex; justify-content: center; }
+    .logo { width: 90.6px; height: 40px; object-fit: cover; border-radius: 8px; }
+
+    .title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px 40px 40px;
+    }
+
+    .icon-btn {
+        background: none; border: none; cursor: pointer;
+        color: var(--muted); width: 20px; height: 20px;
+    }
+    .icon-btn svg { width: 20px; height: 20px; fill: currentColor; display: block; }
+
+    .title-col { display: flex; flex-direction: column; align-items: center; }
+
+    .weight-line {
+        font-size: 12px;
+        font-weight: bold;
+        color: rgba(253, 252, 243, 0.5);
+    }
+
+    .habit-name {
+        max-width: 60vw;
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+        line-height: 1.1;
+        color: var(--alternate);
+    }
+
+    /* Planet */
+    .planet-wrap { display: flex; justify-content: center; }
+    .planet { width: 320px; height: 320px; object-fit: cover; border-radius: 8px; }
+
+    .dots { display: flex; justify-content: space-evenly; align-items: flex-start; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.27); }
+    .dot.active { background: var(--alternate); }
+    .dot.low { margin-bottom: 60px; }
+    .dot.high { margin-bottom: 20px; }
+
+    /* Bottom sheet */
+    .sheet {
+        width: 100%;
+        min-height: 260px;
+        background: var(--alternate);
+        border-radius: 40px 40px 0 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 40px;
+    }
+
+    .descrip {
+        padding: 20px 40px 0 40px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        background: linear-gradient(90deg, var(--tertiary) 0%, var(--secondary) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .verify-btn {
+        margin-top: 20px;
+        width: 336px;
+        max-width: calc(100% - 40px);
+        height: 70px;
+        border-radius: 30px;
+        border: 5px solid var(--secondary);
+        background: rgba(255, 162, 240, 0.51);
+        box-shadow: 0 0 10px 6px rgba(255, 162, 240, 0.56);
+        color: var(--alternate);
+        font-family: inherit;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: transform 0.15s;
+    }
+    .verify-btn:active { transform: scale(0.97); }
+    .verify-btn svg { width: 20px; height: 20px; fill: var(--alternate); }
+
+    /* ---------- Camera ---------- */
+    .camera {
+        position: fixed; inset: 0; background: #000;
+        display: none; z-index: 100;
+    }
+    .camera.active { display: block; }
+    #video {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%; object-fit: cover;
+    }
+    .cam-vignette {
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%);
+        pointer-events: none;
+    }
+    .frame {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 300px; height: 300px;
+        margin: -170px 0 0 -150px;
+        pointer-events: none;
+    }
+    .corner {
+        position: absolute; width: 44px; height: 44px;
+        border: 4px solid var(--secondary);
+        border-radius: 6px;
+    }
+    .corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 18px 0 0 0; }
+    .corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 18px 0 0; }
+    .corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 18px; }
+    .corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 18px 0; }
+    .frame-pulse { animation: framePulse 2s ease-in-out infinite; }
+    @keyframes framePulse { 0%,100% { opacity: 0.9; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.03); } }
+
+    .cam-hint {
+        position: absolute;
+        top: calc(50% + 155px); left: 0; right: 0;
+        text-align: center;
+        color: var(--alternate);
+        font-size: 14px; font-weight: bold;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        pointer-events: none;
+    }
+
+    .cam-top {
+        position: absolute;
+        top: calc(20px + env(safe-area-inset-top, 0px));
+        left: 0; right: 0;
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 24px;
+    }
+    .cam-chip {
+        display: flex; align-items: center; gap: 8px;
+        background: rgba(52, 50, 49, 0.6);
+        border: 2px solid rgba(253, 252, 243, 0.25);
+        border-radius: 30px;
+        padding: 8px 16px;
+        color: var(--alternate);
+        font-size: 12px; font-weight: bold;
+    }
+    .rec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--secondary); animation: blink 1.4s infinite; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+    .round-btn {
+        width: 44px; height: 44px; border-radius: 50%;
+        border: none; background: rgba(253, 252, 243, 0.9);
+        color: var(--tertiary); font-size: 20px; font-weight: bold;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .round-btn svg { width: 22px; height: 22px; fill: var(--tertiary); }
+
+    .cam-bottom {
+        position: absolute;
+        bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+        left: 0; right: 0;
+        display: flex; align-items: center; justify-content: space-evenly;
+    }
+    .shutter {
+        width: 84px; height: 84px; border-radius: 50%;
+        background: var(--alternate);
+        border: 6px solid var(--secondary);
+        box-shadow: 0 0 10px 6px rgba(255, 162, 240, 0.56);
+        cursor: pointer; transition: transform 0.12s;
+    }
+    .shutter:active { transform: scale(0.9); }
+
+    .flash {
+        position: absolute; inset: 0; background: #FDFCF3;
+        opacity: 0; pointer-events: none;
+    }
+    .flash.fire { animation: flashFire 0.35s ease-out; }
+    @keyframes flashFire { 0% { opacity: 0.95; } 100% { opacity: 0; } }
+
+    /* ---------- Analyzing ---------- */
+    .analyze {
+        position: fixed; inset: 0; background: #0B0B0B;
+        display: none; flex-direction: column; align-items: center; justify-content: center;
+        z-index: 110;
+    }
+    .analyze.active { display: flex; }
+
+    .shot {
+        position: relative;
+        width: 300px; max-width: 82vw;
+        aspect-ratio: 1;
+        border-radius: 35px;
+        overflow: hidden;
+        border: 3px solid rgba(255, 162, 240, 0.6);
+        box-shadow: 0 0 40px rgba(255, 162, 240, 0.35);
+    }
+    .shot img { width: 100%; height: 100%; object-fit: cover; }
+    .shot-grid {
+        position: absolute; inset: 0;
+        background-image:
+            linear-gradient(rgba(255,162,240,0.18) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,162,240,0.18) 1px, transparent 1px);
+        background-size: 30px 30px;
+        mix-blend-mode: screen;
+    }
+    .scan {
+        position: absolute; left: 0; right: 0; height: 90px;
+        background: linear-gradient(180deg, transparent, rgba(255,162,240,0.35) 60%, rgba(253,252,243,0.9));
+        animation: scanSweep 1.6s ease-in-out infinite;
+    }
+    @keyframes scanSweep {
+        0% { top: -90px; } 100% { top: 100%; }
+    }
+    .shot.done .scan, .shot.done .shot-grid { opacity: 0; transition: opacity 0.4s; }
+    .shot.done { border-color: var(--success); box-shadow: 0 0 50px rgba(124, 225, 107, 0.45); }
+
+    .stamp {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0;
+    }
+    .stamp.show { animation: stampIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    @keyframes stampIn {
+        0% { opacity: 0; transform: scale(1.6); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    .stamp-circle {
+        width: 110px; height: 110px; border-radius: 50%;
+        background: rgba(124, 225, 107, 0.9);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    .stamp-circle svg { width: 62px; height: 62px; fill: var(--alternate); }
+
+    .status {
+        margin-top: 28px;
+        font-size: 18px; font-weight: bold;
+        color: var(--alternate);
+        text-align: center; padding: 0 30px;
+        min-height: 24px;
+    }
+    .status.ok { color: var(--success); }
+    .sub-status {
+        margin-top: 8px;
+        font-size: 12px; font-weight: 600;
+        color: rgba(253, 252, 243, 0.4);
+    }
+    .bar {
+        margin-top: 22px;
+        width: 200px; height: 6px; border-radius: 30px;
+        background: rgba(253, 252, 243, 0.15);
+        overflow: hidden;
+    }
+    .bar-fill {
+        height: 100%; width: 0%;
+        border-radius: 30px;
+        background: linear-gradient(90deg, var(--secondary), var(--alternate));
+        transition: width 0.4s ease;
+    }
+
+    /* ---------- Result popup ---------- */
+    .result {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        display: none; align-items: center; justify-content: center;
+        z-index: 120;
+    }
+    .result.active { display: flex; }
+
+    .result-card {
+        position: relative;
+        width: 300px;
+        background: var(--alternate);
+        border-radius: 35px;
+        padding: 24px 20px 26px 20px;
+        text-align: center;
+        overflow: hidden;
+        animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.4) translateY(40px); }
+        70% { transform: scale(1.04) translateY(-6px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .verified-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(124, 225, 107, 0.57);
+        border-radius: 30px;
+        padding: 4px 14px;
+        font-size: 12px; font-weight: bold;
+        color: #1a7f1a;
+        margin-bottom: 14px;
+    }
+
+    .stock-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 4px;
+    }
+    .stock-left { display: flex; align-items: flex-end; gap: 2px; }
+    .stock-left img { width: 10px; height: 10px; margin-bottom: 1px; }
+    .stock-value {
+        font-size: 12px; font-weight: bold;
+        background: linear-gradient(90deg, rgba(52,50,49,0.82), var(--tertiary));
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .stock-title { font-size: 15px; font-weight: bold; color: var(--tertiary); }
+    .pct {
+        width: 37px; height: 13px; border-radius: 30px;
+        background: rgba(124, 225, 107, 0.57);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 8px; font-weight: 600; color: rgba(52,50,49,0.78);
+        opacity: 0; transition: opacity 0.4s;
+    }
+    .pct.show { opacity: 1; }
+
+    .chart-box { margin-top: 10px; display: flex; justify-content: center; }
+    #chart { width: 210px; height: 80px; overflow: visible; }
+    .chart-line { fill: none; stroke: var(--success); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .new-dot { fill: var(--success); }
+    .dot-ring { fill: none; stroke: var(--success); stroke-width: 2; opacity: 0; }
+    .dot-ring.pulse { animation: ring 1.2s ease-out infinite; }
+    @keyframes ring {
+        0% { r: 5; opacity: 0.8; }
+        100% { r: 18; opacity: 0; }
+    }
+
+    .gain {
+        margin-top: 14px;
+        font-size: 22px; font-weight: bold;
+        background: linear-gradient(90deg, var(--tertiary), var(--secondary));
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .gain-sub { font-size: 12px; font-weight: 600; color: rgba(52,50,49,0.4); margin-top: 2px; }
+
+    .done-btn {
+        margin-top: 18px;
+        width: 100%; height: 50px;
+        border-radius: 30px;
+        border: 4px solid var(--tertiary);
+        background: transparent;
+        font-family: inherit; font-size: 16px; font-weight: bold;
+        color: var(--tertiary);
+        cursor: pointer;
+    }
+    .done-btn:active { background: rgba(52,50,49,0.08); }
+
+    .confetti {
+        position: absolute; width: 8px; height: 8px; border-radius: 2px;
+        animation: fall 1s ease-out forwards;
+    }
+    @keyframes fall {
+        0% { opacity: 0; transform: translateY(-20px) rotate(0); }
+        100% { opacity: 1; transform: translateY(0) rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div>
+        <div class="logo-wrap">
+            <img class="logo" src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/y9j0ewuqet5q/pipolll.png" alt="Pipoll">
+        </div>
+
+        <div class="title-row">
+            <button class="icon-btn" title="Goals info">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            </button>
+            <div class="title-col">
+                <div class="weight-line">Weight: 25</div>
+                <div class="habit-name">GYM</div>
+            </div>
+            <button class="icon-btn" title="Edit goals">
+                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            </button>
+        </div>
+
+        <div class="planet-wrap">
+            <img class="planet" src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/38suxi4jhj67/pub.png" alt="Goal planet">
+        </div>
+
+        <div class="dots">
+            <div class="dot low"></div>
+            <div class="dot high active"></div>
+            <div class="dot high"></div>
+            <div class="dot low"></div>
+        </div>
+    </div>
+
+    <div class="sheet">
+        <div class="descrip">Went to the gym</div>
+        <button class="verify-btn" onclick="openCamera()">
+            <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+            Verify with photo
+        </button>
+    </div>
+</div>
+
+<!-- Camera -->
+<div class="camera" id="camera">
+    <video id="video" autoplay playsinline muted></video>
+    <div class="cam-vignette"></div>
+
+    <div class="frame frame-pulse">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+    </div>
+    <div class="cam-hint">Show your gym session inside the frame</div>
+
+    <div class="cam-top">
+        <div class="cam-chip"><span class="rec-dot"></span>VERIFIER-1</div>
+        <button class="round-btn" onclick="closeCamera()">✕</button>
+    </div>
+
+    <div class="cam-bottom">
+        <button class="round-btn" onclick="flipCamera()" title="Flip camera">
+            <svg viewBox="0 0 24 24"><path d="M16 7h2.5L15 3.5 11.5 7H14v3h2V7zM8 17H5.5L9 20.5 12.5 17H10v-3H8v3zM20 9h-6v2h6v8H6v-4H4v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2z"/></svg>
+        </button>
+        <button class="shutter" onclick="capture()" aria-label="Take photo"></button>
+        <button class="round-btn" onclick="pickFile()" title="Choose from gallery">
+            <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+        </button>
+    </div>
+
+    <div class="flash" id="flash"></div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none" onchange="fileChosen(event)">
+
+<!-- Analyzing -->
+<div class="analyze" id="analyze">
+    <div class="shot" id="shot">
+        <img id="shotImg" alt="Captured photo">
+        <div class="shot-grid"></div>
+        <div class="scan"></div>
+        <div class="stamp" id="stamp">
+            <div class="stamp-circle">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+        </div>
+    </div>
+    <div class="status" id="status">Uploading photo</div>
+    <div class="sub-status" id="subStatus">VERIFIER-1 is on it</div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+</div>
+
+<!-- Result -->
+<div class="result" id="result">
+    <div class="result-card" id="resultCard">
+        <div class="verified-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#1a7f1a"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            GYM VERIFIED
+        </div>
+
+        <div class="stock-head">
+            <div class="stock-left">
+                <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/ve61vd3of6cf/arrowup.png" alt="Up">
+                <span class="stock-value" id="stockValue">123.8</span>
+            </div>
+            <div class="stock-title">Your Stock</div>
+            <div class="pct" id="pct">+2.1%</div>
+        </div>
+
+        <div class="chart-box">
+            <svg id="chart" viewBox="0 0 210 80" preserveAspectRatio="none">
+                <path class="chart-line" id="oldLine"></path>
+                <path class="chart-line" id="newLine"></path>
+                <circle class="dot-ring" id="dotRing" cx="0" cy="0" r="5"></circle>
+                <circle class="new-dot" id="newDot" cx="0" cy="0" r="0"></circle>
+            </svg>
+        </div>
+
+        <div class="gain" id="gainText">+0.0</div>
+        <div class="gain-sub">added to your stock today</div>
+
+        <button class="done-btn" onclick="closeResult()">Done</button>
+    </div>
+</div>
+
+<script>
+    let stream = null;
+    let facing = 'environment';
+
+    /* ---------- Camera ---------- */
+    async function openCamera() {
+        const cam = document.getElementById('camera');
+        cam.classList.add('active');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            pickFile();
+            return;
+        }
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 1280 } },
+                audio: false
+            });
+            const v = document.getElementById('video');
+            v.srcObject = stream;
+            await v.play();
+        } catch (err) {
+            console.log('Camera error:', err);
+            cam.classList.remove('active');
+            pickFile();
+        }
+    }
+
+    function stopStream() {
+        if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+        document.getElementById('video').srcObject = null;
+    }
+
+    function closeCamera() {
+        stopStream();
+        document.getElementById('camera').classList.remove('active');
+    }
+
+    async function flipCamera() {
+        facing = facing === 'environment' ? 'user' : 'environment';
+        stopStream();
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: false });
+            const v = document.getElementById('video');
+            v.srcObject = stream;
+            await v.play();
+        } catch (err) { console.log('Flip error:', err); }
+    }
+
+    function pickFile() { document.getElementById('fileInput').click(); }
+
+    function fileChosen(e) {
+        const file = e.target.files[0];
+        e.target.value = '';
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => { closeCamera(); runAnalysis(ev.target.result); };
+        reader.readAsDataURL(file);
+    }
+
+    function capture() {
+        const v = document.getElementById('video');
+        const w = v.videoWidth, h = v.videoHeight;
+        if (!w || !h) return;
+
+        const flash = document.getElementById('flash');
+        flash.classList.remove('fire');
+        void flash.offsetWidth;
+        flash.classList.add('fire');
+
+        // Square crop from the centre so it matches the on-screen frame
+        const side = Math.min(w, h);
+        const c = document.createElement('canvas');
+        c.width = 720; c.height = 720;
+        c.getContext('2d').drawImage(v, (w - side) / 2, (h - side) / 2, side, side, 0, 0, 720, 720);
+        const dataUrl = c.toDataURL('image/jpeg', 0.9);
+
+        setTimeout(() => { closeCamera(); runAnalysis(dataUrl); }, 220);
+    }
+
+    /* ---------- Analysis ---------- */
+    const steps = [
+        { t: 'Uploading photo',        s: 'VERIFIER-1 is on it',        p: 25,  at: 0 },
+        { t: 'Reading the scene',      s: 'Looking for gym equipment',  p: 55,  at: 1100 },
+        { t: 'Checking authenticity',  s: 'Timestamp and location',     p: 85,  at: 2300 },
+        { t: 'Verified',               s: 'Goal marked complete',       p: 100, at: 3400 }
+    ];
+
+    function runAnalysis(dataUrl) {
+        const shot = document.getElementById('shot');
+        const status = document.getElementById('status');
+        const sub = document.getElementById('subStatus');
+        const bar = document.getElementById('barFill');
+
+        document.getElementById('shotImg').src = dataUrl;
+        shot.classList.remove('done');
+        document.getElementById('stamp').classList.remove('show');
+        status.classList.remove('ok');
+        bar.style.width = '0%';
+        document.getElementById('analyze').classList.add('active');
+
+        steps.forEach(step => {
+            setTimeout(() => {
+                status.textContent = step.t;
+                sub.textContent = step.s;
+                bar.style.width = step.p + '%';
+                if (step.p === 100) {
+                    status.classList.add('ok');
+                    shot.classList.add('done');
+                    document.getElementById('stamp').classList.add('show');
+                    if (navigator.vibrate) navigator.vibrate(30);
+                }
+            }, step.at);
+        });
+
+        setTimeout(() => {
+            document.getElementById('analyze').classList.remove('active');
+            showResult();
+        }, 4400);
+    }
+
+    /* ---------- Result chart ---------- */
+    const history = [58, 55, 60, 52, 57, 49, 53, 46, 50, 44]; // y values, lower = higher price
+    const gain = 4.7;
+    const oldValue = 123.8;
+
+    function showResult() {
+        const stepX = 210 / (history.length + 1);
+        let d = `M 0 ${history[0]}`;
+        history.forEach((y, i) => { if (i > 0) d += ` L ${i * stepX} ${y}`; });
+
+        const oldPath = document.getElementById('oldLine');
+        oldPath.setAttribute('d', d);
+        const len = oldPath.getTotalLength();
+        oldPath.style.strokeDasharray = len;
+        oldPath.style.strokeDashoffset = len;
+
+        const newLine = document.getElementById('newLine');
+        const dot = document.getElementById('newDot');
+        const ring = document.getElementById('dotRing');
+        newLine.setAttribute('d', '');
+        dot.setAttribute('r', 0);
+        ring.classList.remove('pulse');
+        document.getElementById('pct').classList.remove('show');
+        document.getElementById('gainText').textContent = '+0.0';
+        document.getElementById('stockValue').textContent = oldValue.toFixed(1);
+
+        document.getElementById('result').classList.add('active');
+
+        // 1. draw the existing line
+        requestAnimationFrame(() => {
+            oldPath.style.transition = 'stroke-dashoffset 0.8s ease-out';
+            oldPath.style.strokeDashoffset = 0;
+        });
+
+        // 2. grow the new segment upward
+        const startX = (history.length - 1) * stepX;
+        const startY = history[history.length - 1];
+        const endX = 205, endY = 14;
+
+        setTimeout(() => {
+            const dur = 900, t0 = performance.now();
+            (function grow(now) {
+                const k = Math.min((now - t0) / dur, 1);
+                const eased = 1 - Math.pow(1 - k, 3);
+                const x = startX + (endX - startX) * eased;
+                const y = startY + (endY - startY) * eased;
+
+                newLine.setAttribute('d', `M ${startX} ${startY} L ${x} ${y}`);
+                dot.setAttribute('cx', x); dot.setAttribute('cy', y);
+                dot.setAttribute('r', 4.5 * eased);
+                ring.setAttribute('cx', x); ring.setAttribute('cy', y);
+
+                document.getElementById('gainText').textContent = '+' + (gain * eased).toFixed(1);
+                document.getElementById('stockValue').textContent = (oldValue + gain * eased).toFixed(1);
+
+                if (k < 1) requestAnimationFrame(grow);
+                else {
+                    ring.classList.add('pulse');
+                    document.getElementById('pct').classList.add('show');
+                    confetti();
+                    if (navigator.vibrate) navigator.vibrate([20, 60, 30]);
+                }
+            })(t0);
+        }, 850);
+    }
+
+    function confetti() {
+        const card = document.getElementById('resultCard');
+        const colors = ['#7CE16B', '#FFA2F0', '#FDFCF3', '#5CB85C', '#343231'];
+        for (let i = 0; i < 22; i++) {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.style.left = Math.random() * 100 + '%';
+            c.style.top = '-10px';
+            c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            c.style.animationDelay = (Math.random() * 0.4) + 's';
+            c.style.animationDuration = (0.5 + Math.random() * 0.5) + 's';
+            card.appendChild(c);
+            setTimeout(() => c.remove(), 1600);
+        }
+    }
+
+    function closeResult() {
+        document.getElementById('result').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { closeCamera(); closeResult(); }
+    });
+</script>
+</body>
+</html>
