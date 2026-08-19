@@ -16,16 +16,21 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+
     body {
         font-family: 'Gotham', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background-color: #000000;
-        overflow-x: hidden;
     }
 
     .container {
         position: relative;
         max-width: 430px;
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh;
         margin: 0 auto;
         background: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/5w4uhkhewone/stars.png') center/cover no-repeat;
         display: flex;
@@ -42,7 +47,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 40px 40px 40px;
+        padding: 0 40px 24px 40px;
     }
 
     .icon-btn {
@@ -60,39 +65,53 @@
     }
 
     .habit-name {
-        max-width: 60vw;
+        width: 60vw;
+        max-width: 240px;
         text-align: center;
+        font-family: inherit;
         font-size: 32px;
         font-weight: bold;
         line-height: 1.1;
         color: var(--alternate);
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        caret-color: var(--secondary);
+        cursor: pointer;
+        padding: 0 0 2px 0;
     }
+    .habit-name:hover { border-bottom-color: rgba(253, 252, 243, 0.35); }
+    .habit-name:focus { outline: none; border-bottom-color: var(--secondary); cursor: text; }
 
     /* Planet */
     .planet-wrap { display: flex; justify-content: center; }
-    .planet { width: 320px; height: 320px; object-fit: cover; border-radius: 8px; }
+    .planet {
+        width: min(320px, 72vw);
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 50%;
+    }
 
     .dots { display: flex; justify-content: space-evenly; align-items: flex-start; }
     .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.27); }
     .dot.active { background: var(--alternate); }
-    .dot.low { margin-bottom: 60px; }
-    .dot.high { margin-bottom: 20px; }
+    .dot.low { margin-bottom: 34px; }
+    .dot.high { margin-bottom: 12px; }
 
     /* Bottom sheet */
     .sheet {
         width: 100%;
-        min-height: 260px;
         background: var(--alternate);
         border-radius: 40px 40px 0 0;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding-bottom: 40px;
+        padding: 4px 0 calc(24px + env(safe-area-inset-bottom, 0px)) 0;
     }
 
     .descrip {
-        padding: 20px 40px 0 40px;
+        padding: 18px 40px 0 40px;
         text-align: center;
         font-size: 16px;
         font-weight: bold;
@@ -417,7 +436,7 @@
             </button>
             <div class="title-col">
                 <div class="weight-line">Weight: 25</div>
-                <div class="habit-name">GYM</div>
+                <input type="text" class="habit-name" id="habitName" value="GYM" maxlength="18" onclick="this.select()">
             </div>
             <button class="icon-btn" title="Edit goals">
                 <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
