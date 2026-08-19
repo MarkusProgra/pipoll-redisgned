@@ -843,8 +843,262 @@
         }
 
         /* File Input Hidden */
-        #profileImageInput {
+        #profileImageInput,
+        #cameraInput,
+        #viralInput {
             display: none;
+        }
+
+        /* Photo Source Sheet */
+        .sheet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 10001;
+        }
+
+        .sheet-overlay.active {
+            display: flex;
+        }
+
+        .sheet {
+            width: 100%;
+            max-width: 430px;
+            background: #FDFCF3;
+            border-radius: 32px 32px 0 0;
+            padding: 18px 20px calc(24px + env(safe-area-inset-bottom, 0px)) 20px;
+            animation: sheetUp 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+        }
+
+        @keyframes sheetUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .sheet-title {
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(52, 50, 49, 0.25);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .sheet-btn {
+            width: 100%;
+            height: 56px;
+            border-radius: 24px;
+            border: 3px solid rgba(52, 50, 49, 0.25);
+            background: transparent;
+            font-family: 'Gotham', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: #343231;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
+        }
+
+        .sheet-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .sheet-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .sheet-btn.viral {
+            background: #343231;
+            border-color: #343231;
+            color: #FDFCF3;
+            box-shadow: 0 10px 20px rgba(52, 50, 49, 0.25);
+        }
+
+        .sheet-btn.cancel {
+            border: none;
+            height: 44px;
+            color: rgba(52, 50, 49, 0.4);
+            margin-bottom: 0;
+        }
+
+        /* Camera Overlay */
+        .camera-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000000;
+            display: none;
+            z-index: 10002;
+        }
+
+        .camera-overlay.active {
+            display: block;
+        }
+
+        #cameraVideo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .camera-guide {
+            position: absolute;
+            top: 42%;
+            left: 50%;
+            width: 250px;
+            height: 250px;
+            margin: -125px 0 0 -125px;
+            border: 3px solid rgba(253, 252, 243, 0.85);
+            border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+            pointer-events: none;
+        }
+
+        .camera-hint {
+            position: absolute;
+            top: calc(42% + 145px);
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: 'Gotham', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FDFCF3;
+            pointer-events: none;
+        }
+
+        .shutter-btn {
+            position: absolute;
+            bottom: calc(50px + env(safe-area-inset-bottom, 0px));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            background: #FDFCF3;
+            border: 5px solid #7CE16B;
+            box-shadow: 0 10px 24px rgba(124, 225, 107, 0.5);
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .shutter-btn:active {
+            transform: translateX(-50%) scale(0.92);
+        }
+
+        .camera-close {
+            position: absolute;
+            top: calc(20px + env(safe-area-inset-top, 0px));
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(253, 252, 243, 0.9);
+            font-family: 'Gotham', sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+            color: #343231;
+            cursor: pointer;
+        }
+
+        /* Searching Overlay */
+        .searching-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0B0B0B;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10003;
+        }
+
+        .searching-overlay.active {
+            display: flex;
+        }
+
+        .scan-frame {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            border: 3px solid rgba(124, 225, 107, 0.9);
+            box-shadow: 0 0 45px rgba(124, 225, 107, 0.35);
+        }
+
+        .scan-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scan-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #7CE16B 50%, transparent 100%);
+            animation: scanMove 1.4s ease-in-out infinite;
+        }
+
+        @keyframes scanMove {
+            0% { top: 0; }
+            50% { top: calc(100% - 4px); }
+            100% { top: 0; }
+        }
+
+        .searching-text {
+            margin-top: 30px;
+            padding: 0 30px;
+            text-align: center;
+            font-family: 'Gotham', sans-serif;
+            font-size: 17px;
+            font-weight: bold;
+            color: #FDFCF3;
+            letter-spacing: 0.5px;
+        }
+
+        .searching-dots::after {
+            content: '';
+            animation: dots 1.2s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+
+        .searching-sub {
+            margin-top: 12px;
+            font-family: 'Gotham', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(253, 252, 243, 0.45);
         }
 
         /* Share Section */
@@ -953,6 +1207,8 @@
                         <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/537mlvdjnxgw/22.png" alt="Profile" class="profile-image" id="profileImage">
                     </div>
                     <input type="file" id="profileImageInput" accept="image/*" onchange="updateProfileImage(event)">
+                    <input type="file" id="cameraInput" accept="image/*" capture="user" onchange="updateProfileImage(event)">
+                    <input type="file" id="viralInput" accept="image/*" capture="user" onchange="handleViralFile(event)">
                 </div>
                 <div class="info-section">
                     <div class="name-container">
@@ -1110,6 +1366,51 @@
         </div>
     </div>
 
+    <!-- Photo Source Sheet -->
+    <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet(event)">
+        <div class="sheet">
+            <div class="sheet-title">Profile picture</div>
+            <button class="sheet-btn" onclick="pickFromGallery()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+                Gallery
+            </button>
+            <button class="sheet-btn" onclick="pickFromCamera()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                </svg>
+                Camera
+            </button>
+            <button class="sheet-btn viral" onclick="startViralFeature()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                Viral feature
+            </button>
+            <button class="sheet-btn cancel" onclick="closeSheet()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Viral Camera -->
+    <div class="camera-overlay" id="cameraOverlay">
+        <video id="cameraVideo" autoplay playsinline muted></video>
+        <div class="camera-guide"></div>
+        <div class="camera-hint">Line up the face inside the circle</div>
+        <button class="camera-close" onclick="closeCamera()">✕</button>
+        <button class="shutter-btn" onclick="captureViralPhoto()"></button>
+    </div>
+
+    <!-- Searching Screen -->
+    <div class="searching-overlay" id="searchingOverlay">
+        <div class="scan-frame">
+            <img id="scanImage" alt="Scanned face">
+            <div class="scan-line"></div>
+        </div>
+        <div class="searching-text">Searching Individual On The Market<span class="searching-dots"></span></div>
+        <div class="searching-sub" id="searchingSub">Matching face to a listing</div>
+    </div>
+
     <!-- Modal -->
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
         <div class="modal-content">
@@ -1135,6 +1436,7 @@
         let currentPrice = 345.8;
         let isPositive = true;
         let chartData = [];
+        let cameraStream = null;
 
         // Generate a stock-like series from random trend runs
         function generateChartData(startValue, endValue) {
@@ -1282,9 +1584,28 @@
             drawChart(chartData);
         }
 
-        // Trigger image upload
+        // Open photo source sheet
         function triggerImageUpload() {
+            document.getElementById('sheetOverlay').classList.add('active');
+        }
+
+        // Close photo source sheet
+        function closeSheet(event) {
+            if (!event || event.target === event.currentTarget) {
+                document.getElementById('sheetOverlay').classList.remove('active');
+            }
+        }
+
+        // Gallery option
+        function pickFromGallery() {
+            closeSheet();
             document.getElementById('profileImageInput').click();
+        }
+
+        // Camera option
+        function pickFromCamera() {
+            closeSheet();
+            document.getElementById('cameraInput').click();
         }
 
         // Update profile image
@@ -1297,6 +1618,158 @@
                 };
                 reader.readAsDataURL(file);
             }
+            event.target.value = '';
+        }
+
+        /* ---------- Viral feature ---------- */
+
+        // Viral option: open live camera
+        async function startViralFeature() {
+            closeSheet();
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById('viralInput').click();
+                return;
+            }
+
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 1280 } },
+                    audio: false
+                });
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = cameraStream;
+                await video.play();
+                document.getElementById('cameraOverlay').classList.add('active');
+            } catch (err) {
+                console.log('Camera error:', err);
+                // Fall back to the native camera picker
+                document.getElementById('viralInput').click();
+            }
+        }
+
+        // Stop the stream and hide the camera
+        function closeCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            document.getElementById('cameraVideo').srcObject = null;
+            document.getElementById('cameraOverlay').classList.remove('active');
+        }
+
+        // Take the shot, zoom on the face, then run the search screen
+        async function captureViralPhoto() {
+            const video = document.getElementById('cameraVideo');
+            const w = video.videoWidth;
+            const h = video.videoHeight;
+            if (!w || !h) return;
+
+            const frame = document.createElement('canvas');
+            frame.width = w;
+            frame.height = h;
+            const ctx = frame.getContext('2d');
+            // Mirror so the saved photo matches the preview
+            ctx.translate(w, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, w, h);
+
+            closeCamera();
+
+            const zoomed = await zoomToFace(frame);
+            runMarketSearch(zoomed);
+        }
+
+        // Native camera fallback: same flow, starting from a file
+        function handleViralFile(event) {
+            const file = event.target.files[0];
+            event.target.value = '';
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = async function() {
+                    const frame = document.createElement('canvas');
+                    frame.width = img.naturalWidth;
+                    frame.height = img.naturalHeight;
+                    frame.getContext('2d').drawImage(img, 0, 0);
+                    const zoomed = await zoomToFace(frame);
+                    runMarketSearch(zoomed);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Find the face box: native FaceDetector when available, heuristic otherwise
+        async function detectFaceBox(canvas) {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            if ('FaceDetector' in window) {
+                try {
+                    const detector = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+                    const faces = await detector.detect(canvas);
+                    if (faces && faces.length > 0) {
+                        const b = faces[0].boundingBox;
+                        return { x: b.x, y: b.y, width: b.width, height: b.height };
+                    }
+                } catch (err) {
+                    console.log('Face detection unavailable:', err);
+                }
+            }
+
+            // Heuristic: people centre themselves, head slightly above the middle
+            const size = Math.min(w, h) * 0.42;
+            return {
+                x: w / 2 - size / 2,
+                y: h * 0.40 - size / 2,
+                width: size,
+                height: size
+            };
+        }
+
+        // Crop a square around the face and return it as a data URL
+        async function zoomToFace(canvas) {
+            const box = await detectFaceBox(canvas);
+            const w = canvas.width;
+            const h = canvas.height;
+
+            const centerX = box.x + box.width / 2;
+            const centerY = box.y + box.height / 2;
+
+            // Padding so the crop keeps hair and chin, not just the eyes
+            let side = Math.max(box.width, box.height) * 1.75;
+            side = Math.min(side, w, h);
+
+            let sx = Math.max(0, Math.min(centerX - side / 2, w - side));
+            let sy = Math.max(0, Math.min(centerY - side / 2, h - side));
+
+            const out = document.createElement('canvas');
+            out.width = 512;
+            out.height = 512;
+            out.getContext('2d').drawImage(canvas, sx, sy, side, side, 0, 0, 512, 512);
+
+            return out.toDataURL('image/jpeg', 0.92);
+        }
+
+        // Show the searching screen, then drop the zoomed face into the profile
+        function runMarketSearch(dataUrl) {
+            const overlay = document.getElementById('searchingOverlay');
+            document.getElementById('scanImage').src = dataUrl;
+            document.getElementById('searchingSub').textContent = 'Matching face to a listing';
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                document.getElementById('searchingSub').textContent = 'Checking global rankings';
+            }, 1200);
+
+            setTimeout(() => {
+                document.getElementById('profileImage').src = dataUrl;
+                document.getElementById('modalProfilePic').src = dataUrl;
+                overlay.classList.remove('active');
+            }, 2800);
         }
 
         // Edit goal value
@@ -1604,6 +2077,10 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 document.getElementById('modalOverlay').classList.remove('active');
+                document.getElementById('sheetOverlay').classList.remove('active');
+                if (document.getElementById('cameraOverlay').classList.contains('active')) {
+                    closeCamera();
+                }
             }
         });
     </script>
