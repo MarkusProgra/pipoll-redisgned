@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Photo Verified - Pipoll</title>
-<meta name="theme-color" content="#FDFCF3">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
     :root {
         --alternate: #FDFCF3;   /* cream */
@@ -30,11 +30,11 @@
 
     .container {
         position: relative;
-        max-width: 430px;
+        width: 100%;
         height: 100vh;
         height: 100dvh;
         margin: 0 auto;
-        background: url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/5w4uhkhewone/stars.png') center/cover no-repeat;
+        background: #0A0A12 url('https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/human-stock-6uoy0n/assets/5w4uhkhewone/stars.png') center/cover no-repeat;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -42,6 +42,16 @@
     }
 
     /* Header */
+    .top-cap {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: env(safe-area-inset-top, 0px);
+        min-height: 10px;
+        background: #000000;
+        z-index: 90;
+        pointer-events: none;
+    }
+
     .logo-wrap { padding: 60px 0 10px 0; display: flex; justify-content: center; }
     .logo { width: 90.6px; height: 40px; object-fit: cover; border-radius: 8px; }
 
@@ -468,6 +478,8 @@
 </style>
 </head>
 <body>
+
+<div class="top-cap"></div>
 
 <div class="container">
     <div>
